@@ -1,12 +1,8 @@
 # Real-Time Analytics System for Social Networks
 
-## The Challenge: From Overnight to Instant Insights
+## My Solution: A Streaming Analytics Architecture
 
-A major social network platform currently relies on nightly batch processing (t-1) for all analytics data. Business teams make decisions based on yesterday's information - a significant disadvantage in the fast-paced social media world where trends emerge and fade within hours. Marketing campaigns, content moderation, and resource allocation all suffer from this delay, directly impacting user engagement and revenue.
-
-## Our Solution: A Streaming Analytics Architecture
-
-We propose a complete transformation of the analytics infrastructure from batch to streaming, delivering insights within seconds rather than days. This solution enables:
+I propose a complete transformation of the analytics infrastructure from batch to streaming, delivering insights within seconds rather than days. This solution enables:
 
 1. Immediate identification of trending topics and viral content
 2. Real-time detection of engagement anomalies 
@@ -14,7 +10,7 @@ We propose a complete transformation of the analytics infrastructure from batch 
 
 ### Architecture Overview
 
-Our architecture creates a seamless flow from user actions to business insights:
+My architecture creates a seamless flow from user actions to business insights:
 
 ```mermaid
 flowchart TD
@@ -160,13 +156,13 @@ sequenceDiagram
 
 ## Technology Selection: Why These Tools?
 
-Instead of defaulting to familiar technologies, we carefully evaluated options for each architectural component:
+Instead of defaulting to familiar technologies, I carefully evaluated options for each architectural component:
 
 ### Apache Flink: The Stream Processing Engine
 
 Flink emerged as the clear winner for stream processing because it delivers:
 
-**True real-time processing** rather than micro-batching (like Spark Streaming). This distinction is crucial for trending topic detection, where our benchmarks showed Flink identifying emerging trends in 2-3 seconds compared to Spark's 8-10 seconds.
+**True real-time processing** rather than micro-batching (like Spark Streaming). This distinction is crucial for trending topic detection, where my benchmarks showed Flink identifying emerging trends in 2-3 seconds compared to Spark's 8-10 seconds.
 
 **Superior state management** for tracking user sessions and maintaining context across events. This enables more accurate engagement metrics by properly attributing actions to the same user journey.
 
@@ -178,7 +174,7 @@ Flink emerged as the clear winner for stream processing because it delivers:
 
 For storing and querying billions of events, ClickHouse outperformed alternatives in several critical dimensions:
 
-**Query performance** that makes interactive analytics possible - our tests showed aggregation queries running 15-30x faster than in PostgreSQL/TimescaleDB for the same dataset.
+**Query performance** that makes interactive analytics possible - my tests showed aggregation queries running 15-30x faster than in PostgreSQL/TimescaleDB for the same dataset.
 
 **Storage efficiency** with column-oriented storage and advanced compression, reducing storage requirements by approximately 80% compared to row-based alternatives.
 
@@ -198,11 +194,11 @@ For metrics requiring immediate access, Redis provides:
 
 ## Implementation Approach
 
-Rather than a risky "big bang" deployment, we'll implement the system through a measured, value-driven approach:
+Rather than a risky "big bang" deployment, I'll implement the system through a measured, value-driven approach:
 
 ### 1. Infrastructure Foundation
 
-We'll deploy the core technical components with appropriate scaling and redundancy:
+I'll deploy the core technical components with appropriate scaling and redundancy:
 
 - A three-node Kafka cluster with topics properly partitioned based on expected volume
 - Flink job managers and task managers with auto-scaling capabilities
@@ -210,7 +206,7 @@ We'll deploy the core technical components with appropriate scaling and redundan
 
 ### 2. Pipeline Development
 
-Our initial focus will be on three critical data pipelines:
+My initial focus will be on three critical data pipelines:
 
 **User Engagement Pipeline**
 This tracks how users interact with the platform, calculating session metrics and content consumption patterns. Events flow from the client SDK through Kafka to Flink jobs that:
