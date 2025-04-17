@@ -373,84 +373,62 @@ flowchart TD
     end
     
     %% Core Bio-Adaptive System
-    subgraph CoreSystem["Bio-Adaptive Neural-Vascular System"]
-        %% Sensing Layer - Acts as system's sensory organs
-        subgraph SensingLayer["BioSensing Layer (Sensory Organs)"]
-            PCN["Passenger Counting Nodes"]
-            TrafficSensors["Traffic Monitoring Nodes"]
-            EnvSensors["Environmental Monitoring"]
-            BioSensors["Biometric Satisfaction Sensors"]
-            CrowdCameras["Crowd Density Cameras"]
-            InfraMonitors["Infrastructure Status Monitors"]
-            MobileSensors["Mobile Sensor Network"]
-        end
-        
-        %% Neural Network Layer - The system's brain
-        subgraph NeuralLayer["Neural Network Layer (System Brain)"]
-            PNN["Predictive Neural Network (Prefrontal Cortex)"]
-            SNN["Sensory Neural Network (Thalamus)"]
-            ANN["Adaptive Neural Network (Cerebellum)"]
-            INN["Integrative Neural Network (Cortex)"]
-            AnomDetect["Anomaly Detection (Amygdala)"]
-            RL["Reinforcement Learning Center"]
-            TempPatterns["Temporal Pattern Analysis"]
-        end
-        
-        %% Adaptive Control Center - Regulatory mechanisms
-        subgraph ControlLayer["Adaptive Control Center (Regulatory System)"]
-            HomeoCont["Homeostatic Controller"]
-            ResAlloc["Resource Redistribution"]
-            SysProt["System Protection"]
-            SysEvol["System Evolution"]
-            SafetyOps["Safety Operations"]
-            EmergResponse["Emergency Response Coordination"]
-            DemandBalance["Demand Balancing Mechanisms"]
-            EnergyMgmt["Energy Management"]
-        end
-        
-        %% Data Services Layer - Memory and information processing
-        subgraph DataLayer["Data Services (Memory & Information)"]
-            RealTimeProc["Real-time Stream Processing"]
-            HistStore["Historical Data Storage"]
-            PredAnalytics["Predictive Analytics"]
-            TimeSeries["Time Series Database"]
-            GraphDB["Network Topology Graph"]
-            CacheLayer["Distributed Cache"]
-            DataLake["Data Lake"]
-            OLAP["Analytical Processing"]
-        end
-        
-        %% Core Infrastructure Services
-        subgraph InfraServices["Infrastructure Services"]
-            SecServices["Security & Identity"]
-            MonAlert["Monitoring & Alerting"]
-            LogAggr["Log Aggregation"]
-            CICD["Continuous Integration/Deployment"]
-            Messaging["Messaging Systems"]
-            APIMgmt["API Management"]
-            ServiceMesh["Service Mesh"]
-            Orchestration["Container Orchestration"]
-        end
-        
-        %% Inner Connections
-        SensingLayer -->|"Environmental Data"| SNN
-        SensingLayer -->|"Passenger Flow Data"| PNN
-        SensingLayer -->|"Real-time Conditions"| AnomDetect
-        
-        PNN -->|"Demand Forecasts"| ResAlloc
-        SNN -->|"Environmental Awareness"| HomeoCont
-        ANN -->|"Learning Patterns"| SysEvol
-        INN -->|"Integrated Context"| SysProt
-        AnomDetect -->|"Anomaly Alerts"| EmergResponse
-        
-        RealTimeProc -.->|"Status Updates"| ControlLayer
-        ControlLayer -.->|"Decision Logs"| HistStore
-        HistStore -.->|"Historical Patterns"| PredAnalytics
-        PredAnalytics -.->|"Forecasts"| PNN
-        
-        NeuralLayer <-->|"Data Exchange"| DataLayer
-        ControlLayer <-->|"Control Signals"| DataLayer
-        InfraServices -.->|"Platform Support"| CoreSystem
+    %% Sensing Layer - Acts as system's sensory organs
+    subgraph SensingLayer["BioSensing Layer (Sensory Organs)"]
+        PCN["Passenger Counting Nodes"]
+        TrafficSensors["Traffic Monitoring Nodes"]
+        EnvSensors["Environmental Monitoring"]
+        BioSensors["Biometric Satisfaction Sensors"]
+        CrowdCameras["Crowd Density Cameras"]
+        InfraMonitors["Infrastructure Status Monitors"]
+        MobileSensors["Mobile Sensor Network"]
+    end
+    
+    %% Neural Network Layer - The system's brain
+    subgraph NeuralLayer["Neural Network Layer (System Brain)"]
+        PNN["Predictive Neural Network (Prefrontal Cortex)"]
+        SNN["Sensory Neural Network (Thalamus)"]
+        ANN["Adaptive Neural Network (Cerebellum)"]
+        INN["Integrative Neural Network (Cortex)"]
+        AnomDetect["Anomaly Detection (Amygdala)"]
+        RL["Reinforcement Learning Center"]
+        TempPatterns["Temporal Pattern Analysis"]
+    end
+    
+    %% Adaptive Control Center - Regulatory mechanisms
+    subgraph ControlLayer["Adaptive Control Center (Regulatory System)"]
+        HomeoCont["Homeostatic Controller"]
+        ResAlloc["Resource Redistribution"]
+        SysProt["System Protection"]
+        SysEvol["System Evolution"]
+        SafetyOps["Safety Operations"]
+        EmergResponse["Emergency Response Coordination"]
+        DemandBalance["Demand Balancing Mechanisms"]
+        EnergyMgmt["Energy Management"]
+    end
+    
+    %% Data Services Layer - Memory and information processing
+    subgraph DataLayer["Data Services (Memory & Information)"]
+        RealTimeProc["Real-time Stream Processing"]
+        HistStore["Historical Data Storage"]
+        PredAnalytics["Predictive Analytics"]
+        TimeSeries["Time Series Database"]
+        GraphDB["Network Topology Graph"]
+        CacheLayer["Distributed Cache"]
+        DataLake["Data Lake"]
+        OLAP["Analytical Processing"]
+    end
+    
+    %% Core Infrastructure Services
+    subgraph InfraServices["Infrastructure Services"]
+        SecServices["Security & Identity"]
+        MonAlert["Monitoring & Alerting"]
+        LogAggr["Log Aggregation"]
+        CICD["Continuous Integration/Deployment"]
+        Messaging["Messaging Systems"]
+        APIMgmt["API Management"]
+        ServiceMesh["Service Mesh"]
+        Orchestration["Container Orchestration"]
     end
     
     %% Physical Transportation System
@@ -497,20 +475,6 @@ flowchart TD
             AutonomySys["Autonomy Systems"]
             TelematicsSys["Telematics Systems"]
         end
-        
-        %% Physical Layer Connections
-        ArterialNet <-->|"Passenger Transfer"| TransitHubs
-        CapillaryNet <-->|"Passenger Transfer"| TransitHubs
-        Connectors <-->|"Flexible Routing"| ArterialNet
-        Connectors <-->|"Service Extension"| CapillaryNet
-        
-        ArterialNet -.->|"Maintenance & Charging"| PhysicalInfra
-        CapillaryNet -.->|"Maintenance & Charging"| PhysicalInfra
-        Connectors -.->|"Maintenance & Charging"| PhysicalInfra
-        
-        VehicleSystems -->|"Operational Systems"| ArterialNet
-        VehicleSystems -->|"Operational Systems"| CapillaryNet
-        VehicleSystems -->|"Operational Systems"| Connectors
     end
     
     %% User Interfaces
@@ -525,22 +489,58 @@ flowchart TD
         ARNavigation["AR Navigation Guidance"]
     end
     
-    %% Major System Connections
-    ExternalSystems <-->|"API Integration & Data Exchange"| CoreSystem
+    %% Component connections without cycles
     
-    CoreSystem -->|"Command & Control Signals"| PhysicalSystem
-    PhysicalSystem -->|"Status, Telemetry & Performance Data"| CoreSystem
+    %% Connections between main layers
+    SensingLayer -->|"Environmental Data"| SNN
+    SensingLayer -->|"Passenger Flow Data"| PNN
+    SensingLayer -->|"Real-time Conditions"| AnomDetect
     
-    Interfaces <-->|"User Interaction & Information"| CoreSystem
-    Interfaces -.->|"Real-time Information"| PhysicalSystem
+    PNN -->|"Demand Forecasts"| ResAlloc
+    SNN -->|"Environmental Awareness"| HomeoCont
+    ANN -->|"Learning Patterns"| SysEvol
+    INN -->|"System Integration"| SysProt
+    AnomDetect -->|"Anomaly Alerts"| EmergResponse
     
-    %% Detailed External Connections
-    Weather -->|"Weather Forecasts"| EnvSensors
+    NeuralLayer -->|"Control Signals"| ControlLayer
+    ControlLayer -->|"Resource Commands"| PhysicalSystem
+    PhysicalSystem -->|"Status & Telemetry"| DataLayer
+    DataLayer -->|"Real-time Analytics"| NeuralLayer
+    
+    ControlLayer -->|"Decision Logs"| HistStore
+    HistStore -->|"Historical Patterns"| PredAnalytics
+    PredAnalytics -->|"Forecasts"| PNN
+    
+    %% Infrastructure connections
+    InfraServices -->|"Security Services"| SecServices
+    InfraServices -->|"Monitoring"| MonAlert
+    InfraServices -->|"Deployment"| CICD
+    
+    %% External connections
+    ExternalSystems <-->|"API Integration"| APIMgmt
+    Weather -->|"Weather Data"| EnvSensors
     Traffic -->|"Traffic Conditions"| TrafficSensors
     SmartCity -->|"Urban Data"| SensingLayer
     Emergency <-->|"Priority Routing"| EmergResponse
-    Events -->|"Crowd Forecasts"| PNN
+    Events -->|"Crowd Predictions"| PNN
     Grid <-->|"Energy Optimization"| EnergyMgmt
+    
+    %% User Interface connections
+    Interfaces -->|"Passenger Commands"| ControlLayer
+    ControlLayer -->|"Status Updates"| Interfaces
+    
+    %% Physical layer connections
+    ArterialNet <-->|"Passenger Transfer"| TransitHubs
+    CapillaryNet <-->|"Passenger Transfer"| TransitHubs
+    Connectors <-->|"Flexible Routing"| ArterialNet
+    Connectors <-->|"Service Extension"| CapillaryNet
+    
+    ArterialNet -->|"Maintenance Needs"| MaintenanceFac
+    CapillaryNet -->|"Charging Needs"| ChargStations
+    
+    VehicleSystems -->|"Operational Systems"| ArterialNet
+    VehicleSystems -->|"Operational Systems"| CapillaryNet
+    VehicleSystems -->|"Operational Systems"| Connectors
     
     %% Class Styling
     class ExternalSystems,Weather,Traffic,SmartCity,Payment,Emergency,Events,Grid,Municipal external
@@ -557,7 +557,7 @@ This comprehensive architectural diagram illustrates the complete BioAdaptive Ur
 
 1. **External Urban Ecosystem** - Represents the surrounding environment with which the system must interact and adapt to
 
-2. **Bio-Adaptive Neural-Vascular System** - The central "brain" and "nervous system":
+2. **Core System Components**:
    - **BioSensing Layer** functions as sensory organs, collecting data from multiple sources
    - **Neural Network Layer** processes information like a brain, with specialized regions for different functions
    - **Adaptive Control Center** regulates the system like homeostatic mechanisms in living organisms
