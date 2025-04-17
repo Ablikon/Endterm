@@ -1,16 +1,6 @@
 # Integrated Autonomous Transit System (IATS)
 
-## Problem Analysis: Current Urban Transit Challenges
-
-Urban public transportation systems worldwide face a fundamental dilemma: fixed-capacity vehicles must serve highly variable passenger demand. This mismatch creates two opposing problems:
-
-1. **Peak Congestion**: During rush hours, buses and trains become dangerously overcrowded, leading to passenger discomfort, extended wait times, and deteriorating service quality.
-
-2. **Off-Peak Inefficiency**: During non-peak hours, large vehicles operate nearly empty, wasting fuel, increasing emissions, and draining financial resources.
-
-These inefficiencies create a negative cycle: poor service quality drives passengers toward private transportation options, further reducing fare revenue and making service improvements financially challenging.
-
-## Solution Overview: Adaptive Autonomous Transit
+##Adaptive Autonomous Transit
 
 I propose an Integrated Autonomous Transit System (IATS) that combines conventional high-capacity vehicles with a dynamic fleet of autonomous shuttles. This hybrid approach allows the transportation network to breathe—expanding and contracting based on real-time demand patterns.
 
