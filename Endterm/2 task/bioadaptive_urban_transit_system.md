@@ -345,6 +345,236 @@ This dynamic approach maintains autonomous operation for 94% of service hours wh
 
 ## Technical System Design
 
+### High-Level System Overview
+
+The complete BioAdaptive Urban Transit System integrates all components into a comprehensive biomimetic framework:
+
+```mermaid
+flowchart TD
+    classDef external fill:#e9d8fe,stroke:#9b59b6,stroke-width:1px
+    classDef sensor fill:#dff0d8,stroke:#3c763d,stroke-width:2px
+    classDef neural fill:#d9edf7,stroke:#31708f,stroke-width:2px
+    classDef control fill:#f2dede,stroke:#a94442,stroke-width:2px
+    classDef data fill:#fcf8e3,stroke:#8a6d3b,stroke-width:2px
+    classDef physical fill:#d0f0c0,stroke:#27ae60,stroke-width:2px
+    classDef user fill:#fcdfdc,stroke:#e74c3c,stroke-width:2px
+    classDef infra fill:#f5f5f5,stroke:#777777,stroke-width:1px
+    
+    %% External Systems and Integrations
+    subgraph ExternalSystems["External Urban Ecosystem"]
+        Weather["Weather Services & Forecasts"]
+        Traffic["Municipal Traffic Systems"]
+        SmartCity["Smart City Infrastructure"]
+        Payment["Payment & Ticketing Systems"]
+        Emergency["Emergency Services"]
+        Events["Event Management Systems"]
+        Grid["Smart Energy Grid"]
+        Municipal["Municipal Planning Systems"]
+    end
+    
+    %% Core Bio-Adaptive System
+    subgraph CoreSystem["Bio-Adaptive Neural-Vascular System"]
+        %% Sensing Layer - Acts as system's sensory organs
+        subgraph SensingLayer["BioSensing Layer (Sensory Organs)"]
+            PCN["Passenger Counting Nodes"]
+            TrafficSensors["Traffic Monitoring Nodes"]
+            EnvSensors["Environmental Monitoring"]
+            BioSensors["Biometric Satisfaction Sensors"]
+            CrowdCameras["Crowd Density Cameras"]
+            InfraMonitors["Infrastructure Status Monitors"]
+            MobileSensors["Mobile Sensor Network"]
+        end
+        
+        %% Neural Network Layer - The system's brain
+        subgraph NeuralLayer["Neural Network Layer (System Brain)"]
+            PNN["Predictive Neural Network (Prefrontal Cortex)"]
+            SNN["Sensory Neural Network (Thalamus)"]
+            ANN["Adaptive Neural Network (Cerebellum)"]
+            INN["Integrative Neural Network (Cortex)"]
+            AnomDetect["Anomaly Detection (Amygdala)"]
+            RL["Reinforcement Learning Center"]
+            TempPatterns["Temporal Pattern Analysis"]
+        end
+        
+        %% Adaptive Control Center - Regulatory mechanisms
+        subgraph ControlLayer["Adaptive Control Center (Regulatory System)"]
+            HomeoCont["Homeostatic Controller"]
+            ResAlloc["Resource Redistribution"]
+            SysProt["System Protection"]
+            SysEvol["System Evolution"]
+            SafetyOps["Safety Operations"]
+            EmergResponse["Emergency Response Coordination"]
+            DemandBalance["Demand Balancing Mechanisms"]
+            EnergyMgmt["Energy Management"]
+        end
+        
+        %% Data Services Layer - Memory and information processing
+        subgraph DataLayer["Data Services (Memory & Information)"]
+            RealTimeProc["Real-time Stream Processing"]
+            HistStore["Historical Data Storage"]
+            PredAnalytics["Predictive Analytics"]
+            TimeSeries["Time Series Database"]
+            GraphDB["Network Topology Graph"]
+            CacheLayer["Distributed Cache"]
+            DataLake["Data Lake"]
+            OLAP["Analytical Processing"]
+        end
+        
+        %% Core Infrastructure Services
+        subgraph InfraServices["Infrastructure Services"]
+            SecServices["Security & Identity"]
+            MonAlert["Monitoring & Alerting"]
+            LogAggr["Log Aggregation"]
+            CICD["Continuous Integration/Deployment"]
+            Messaging["Messaging Systems"]
+            APIMgmt["API Management"]
+            ServiceMesh["Service Mesh"]
+            Orchestration["Container Orchestration"]
+        end
+        
+        %% Inner Connections
+        SensingLayer -->|"Environmental Data"| SNN
+        SensingLayer -->|"Passenger Flow Data"| PNN
+        SensingLayer -->|"Real-time Conditions"| AnomDetect
+        
+        PNN -->|"Demand Forecasts"| ResAlloc
+        SNN -->|"Environmental Awareness"| HomeoCont
+        ANN -->|"Learning Patterns"| SysEvol
+        INN -->|"Integrated Context"| SysProt
+        AnomDetect -->|"Anomaly Alerts"| EmergResponse
+        
+        RealTimeProc -.->|"Status Updates"| ControlLayer
+        ControlLayer -.->|"Decision Logs"| HistStore
+        HistStore -.->|"Historical Patterns"| PredAnalytics
+        PredAnalytics -.->|"Forecasts"| PNN
+        
+        NeuralLayer <-->|"Data Exchange"| DataLayer
+        ControlLayer <-->|"Control Signals"| DataLayer
+        InfraServices -.->|"Platform Support"| CoreSystem
+    end
+    
+    %% Physical Transportation System
+    subgraph PhysicalSystem["Circulatory Transportation System"]
+        %% Arterial Network - Main corridors
+        subgraph ArterialNet["Arterial Network (Main Corridors)"]
+            HCBuses["High-Capacity Buses"]
+            LRT["Light Rail Transit"]
+            BRT["Bus Rapid Transit"]
+            Trams["Tram Lines"]
+        end
+        
+        %% Capillary Network - Neighborhood service
+        subgraph CapillaryNet["Capillary Network (Neighborhoods)"]
+            AutShuttles["Autonomous Shuttles"]
+            MicroMobility["Micro-Mobility Units"]
+            SupportDrones["Support Drones"]
+            LastMile["Last-Mile Vehicles"]
+        end
+        
+        %% Adaptive connectors
+        subgraph Connectors["Adaptive Connectors (Flexible Service)"]
+            MediumBuses["Medium-Capacity Buses"]
+            DynamicRoutes["Dynamic Route Vehicles"]
+            FlexService["Flexible Service Units"]
+        end
+        
+        %% Infrastructure
+        subgraph PhysicalInfra["Support Infrastructure"]
+            ChargStations["Charging Stations"]
+            MaintenanceFac["Maintenance Facilities"]
+            TransitHubs["Transitional Spaces/Hubs"]
+            SmartStops["Smart Stops & Stations"]
+            DynamicLanes["Dynamic Lane Markers"]
+        end
+        
+        %% Vehicle Systems
+        subgraph VehicleSystems["Vehicle Systems"]
+            PropulsionSys["Propulsion Systems"]
+            NaviSys["Navigation & Localization"]
+            V2V["Vehicle-to-Vehicle Communication"]
+            V2I["Vehicle-to-Infrastructure Communication"]
+            SafetySys["Safety Systems"]
+            AutonomySys["Autonomy Systems"]
+            TelematicsSys["Telematics Systems"]
+        end
+        
+        %% Physical Layer Connections
+        ArterialNet <-->|"Passenger Transfer"| TransitHubs
+        CapillaryNet <-->|"Passenger Transfer"| TransitHubs
+        Connectors <-->|"Flexible Routing"| ArterialNet
+        Connectors <-->|"Service Extension"| CapillaryNet
+        
+        ArterialNet -.->|"Maintenance & Charging"| PhysicalInfra
+        CapillaryNet -.->|"Maintenance & Charging"| PhysicalInfra
+        Connectors -.->|"Maintenance & Charging"| PhysicalInfra
+        
+        VehicleSystems -->|"Operational Systems"| ArterialNet
+        VehicleSystems -->|"Operational Systems"| CapillaryNet
+        VehicleSystems -->|"Operational Systems"| Connectors
+    end
+    
+    %% User Interfaces
+    subgraph Interfaces["User Interfaces & Experience"]
+        PassApp["Passenger Mobile Application"]
+        DriverInt["Driver/Operator Interface"]
+        OpCenter["Operations Control Center"]
+        AdminPortal["Administrative Portal"]
+        PublicDisplays["Public Information Displays"]
+        AccessSystems["Accessibility Systems"]
+        VoiceAssist["Voice Assistants"]
+        ARNavigation["AR Navigation Guidance"]
+    end
+    
+    %% Major System Connections
+    ExternalSystems <-->|"API Integration & Data Exchange"| CoreSystem
+    
+    CoreSystem -->|"Command & Control Signals"| PhysicalSystem
+    PhysicalSystem -->|"Status, Telemetry & Performance Data"| CoreSystem
+    
+    Interfaces <-->|"User Interaction & Information"| CoreSystem
+    Interfaces -.->|"Real-time Information"| PhysicalSystem
+    
+    %% Detailed External Connections
+    Weather -->|"Weather Forecasts"| EnvSensors
+    Traffic -->|"Traffic Conditions"| TrafficSensors
+    SmartCity -->|"Urban Data"| SensingLayer
+    Emergency <-->|"Priority Routing"| EmergResponse
+    Events -->|"Crowd Forecasts"| PNN
+    Grid <-->|"Energy Optimization"| EnergyMgmt
+    
+    %% Class Styling
+    class ExternalSystems,Weather,Traffic,SmartCity,Payment,Emergency,Events,Grid,Municipal external
+    class PCN,TrafficSensors,EnvSensors,BioSensors,CrowdCameras,InfraMonitors,MobileSensors sensor
+    class PNN,SNN,ANN,INN,AnomDetect,RL,TempPatterns neural
+    class HomeoCont,ResAlloc,SysProt,SysEvol,SafetyOps,EmergResponse,DemandBalance,EnergyMgmt control
+    class RealTimeProc,HistStore,PredAnalytics,TimeSeries,GraphDB,CacheLayer,DataLake,OLAP data
+    class SecServices,MonAlert,LogAggr,CICD,Messaging,APIMgmt,ServiceMesh,Orchestration infra
+    class ArterialNet,CapillaryNet,Connectors,PhysicalInfra,VehicleSystems,HCBuses,LRT,BRT,Trams,AutShuttles,MicroMobility,SupportDrones,LastMile,MediumBuses,DynamicRoutes,FlexService,ChargStations,MaintenanceFac,TransitHubs,SmartStops,DynamicLanes,PropulsionSys,NaviSys,V2V,V2I,SafetySys,AutonomySys,TelematicsSys physical
+    class Interfaces,PassApp,DriverInt,OpCenter,AdminPortal,PublicDisplays,AccessSystems,VoiceAssist,ARNavigation user
+```
+
+This comprehensive architectural diagram illustrates the complete BioAdaptive Urban Transit System, showing how all components work together as an integrated living system. The architecture follows biomimetic principles at every level:
+
+1. **External Urban Ecosystem** - Represents the surrounding environment with which the system must interact and adapt to
+
+2. **Bio-Adaptive Neural-Vascular System** - The central "brain" and "nervous system":
+   - **BioSensing Layer** functions as sensory organs, collecting data from multiple sources
+   - **Neural Network Layer** processes information like a brain, with specialized regions for different functions
+   - **Adaptive Control Center** regulates the system like homeostatic mechanisms in living organisms
+   - **Data Services** provide memory and information processing capabilities
+   - **Infrastructure Services** support the core functions like metabolic systems
+
+3. **Circulatory Transportation System** - The physical "vascular system":
+   - **Arterial Network** - Main high-capacity corridors (like arteries)
+   - **Capillary Network** - Neighborhood-level fine-grained service (like capillaries)
+   - **Adaptive Connectors** - Flexible components that bridge between arterial and capillary (like arterioles)
+   - **Support Infrastructure** - Energy, maintenance and transfer facilities (like organ systems)
+   - **Vehicle Systems** - The operational components of individual transit units
+
+4. **User Interfaces & Experience** - The interaction layer between humans and the system
+
+The connections between these systems demonstrate how information, commands, and physical movement flow through the entire system, creating a responsive and adaptive urban transit network that operates with the efficiency of biological systems.
+
 ### Microservices Architecture
 
 The BAUTS software infrastructure is built on a cloud-native microservices architecture to ensure modularity, scalability, and resilience. This approach allows independent development, deployment, and scaling of individual system components.
@@ -600,57 +830,16 @@ The BAUTS exposes and consumes APIs through a well-defined interface layer:
    - Autonomous vehicles: Custom binary protocol over secure cellular connections
    - V2X communication: DSRC and C-V2X protocols compliant with industry standards
 
-Sample API specifications (simplified):
+**Key API Endpoints and Functionality:**
 
-```yaml
-openapi: 3.0.0
-info:
-  title: BAUTS Passenger API
-  version: 1.0.0
-paths:
-  /journeys:
-    post:
-      summary: Request a new journey
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                origin:
-                  $ref: '#/components/schemas/GeoLocation'
-                destination:
-                  $ref: '#/components/schemas/GeoLocation'
-                departureTime:
-                  type: string
-                  format: date-time
-                preferences:
-                  $ref: '#/components/schemas/JourneyPreferences'
-      responses:
-        '201':
-          description: Journey created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Journey'
-  
-  /vehicles/{vehicleId}/location:
-    get:
-      summary: Get real-time vehicle location
-      parameters:
-        - name: vehicleId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Vehicle location
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/VehicleLocation'
-```
+The system provides intuitive API interfaces for various stakeholders:
+
+- **Passenger APIs**: Journey planning, real-time tracking, fare management, and personalized preferences
+- **Vehicle APIs**: Telemetry reporting, command and control, software updates, and diagnostic interfaces
+- **Operations APIs**: Fleet monitoring, resource allocation, maintenance scheduling, and performance analytics
+- **Integration APIs**: Third-party services, municipal systems, payment processors, and traffic management systems
+
+Each API is versioned, documented with interactive specifications, and includes comprehensive authentication, rate limiting, and monitoring capabilities.
 
 ### Scalability and High Availability Architecture
 
