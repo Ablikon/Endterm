@@ -339,6 +339,450 @@ This approach maintains a 92% utilization rate across the daily cycle while pres
 
 This dynamic approach maintains autonomous operation for 94% of service hours while ensuring human involvement during the 6% of situations where it truly adds value.
 
+## Technical System Design
+
+### Microservices Architecture
+
+The BAUTS software infrastructure is built on a cloud-native microservices architecture to ensure modularity, scalability, and resilience. This approach allows independent development, deployment, and scaling of individual system components.
+
+```mermaid
+graph TD
+    subgraph "Core Platform"
+        API["API Gateway<br>(Kong)"]
+        SB["Service Bus<br>(Kafka)"]
+        SM["Service Mesh<br>(Istio)"]
+        Reg["Service Registry<br>(Consul)"]
+        
+        API --> SM
+        SM <--> SB
+        SM <--> Reg
+    end
+    
+    subgraph "Data Services"
+        direction TB
+        TS["Time Series DB<br>(InfluxDB)"]
+        Doc["Document Store<br>(MongoDB)"]
+        Graph["Graph DB<br>(Neo4j)"]
+        DL["Data Lake<br>(S3/Minio)"]
+        Cache["Distributed Cache<br>(Redis)"]
+    end
+    
+    subgraph "Domain Services"
+        direction LR
+        
+        subgraph "Sensing Services"
+            PS["Passenger Sensor Service"]
+            TS_Service["Traffic Sensor Service"]
+            ES["Environmental Service"]
+            VS["Vehicle Sensor Service"]
+        end
+        
+        subgraph "Intelligence Services"
+            DPS["Demand Prediction Service"]
+            ROS["Route Optimization Service"]
+            AAS["Anomaly Analysis Service"]
+            MLOPS["ML Operations Platform"]
+        end
+        
+        subgraph "Operational Services"
+            FMS["Fleet Management Service"]
+            RS["Routing Service"]
+            SS["Scheduling Service"]
+            MS["Maintenance Service"]
+        end
+        
+        subgraph "Interface Services"
+            PIS["Passenger Interface Service"]
+            DIS["Driver Interface Service"]
+            SYSOPS["System Operations Service"]
+        end
+    end
+    
+    subgraph "Infrastructure Services"
+        SEC["Security Services"]
+        MON["Monitoring & Alerting<br>(Prometheus/Grafana)"]
+        LOG["Log Aggregation<br>(ELK Stack)"]
+        CI["Continuous Integration"]
+    end
+    
+    %% Connections
+    API --> Domain Services
+    Domain Services <--> SB
+    Domain Services --> Data Services
+    Infrastructure Services --> Domain Services
+    
+    %% Style
+    classDef core fill:#d1e7fc,stroke:#2980b9,stroke-width:2px
+    classDef data fill:#e9d8fe,stroke:#9b59b6,stroke-width:2px
+    classDef domain fill:#d0f0c0,stroke:#27ae60,stroke-width:2px
+    classDef infra fill:#fcdfdc,stroke:#e74c3c,stroke-width:2px
+    
+    class API,SB,SM,Reg core
+    class TS,Doc,Graph,DL,Cache data
+    class PS,TS_Service,ES,VS,DPS,ROS,AAS,MLOPS,FMS,RS,SS,MS,PIS,DIS,SYSOPS domain
+    class SEC,MON,LOG,CI infra
+```
+
+### Domain Services Implementation
+
+Each microservice is containerized using Docker and orchestrated by Kubernetes for automatic scaling, deployment, and healing. Key design patterns implemented include:
+
+1. **Event Sourcing**: All state changes are captured as a sequence of immutable events stored in Kafka, enabling reliable system recovery and accurate auditing.
+
+2. **CQRS (Command Query Responsibility Segregation)**: Separate models for read and write operations optimize each path for their respective performance requirements.
+
+3. **Circuit Breaker Pattern**: Prevents cascading failures when downstream services experience issues, essential for maintaining overall system stability.
+
+4. **API Gateway Pattern**: All external communications funnel through a unified gateway that handles authentication, rate limiting, and request routing.
+
+### Data Architecture & Storage Strategy
+
+The BAUTS implements a polyglot persistence approach, using specialized databases for different data types and access patterns:
+
+```mermaid
+erDiagram
+    VEHICLE ||--o{ VEHICLE_TELEMETRY : "streams"
+    VEHICLE {
+        uuid vehicle_id
+        string type
+        int capacity
+        string status
+        float battery_level
+        point current_location
+        datetime last_maintenance
+    }
+    
+    VEHICLE_TELEMETRY {
+        uuid telemetry_id
+        uuid vehicle_id
+        point location
+        float speed
+        json sensor_data
+        timestamp created_at
+    }
+    
+    ROUTE ||--|{ ROUTE_SEGMENT : contains
+    ROUTE {
+        uuid route_id
+        string name
+        float fixed_flexible_ratio
+        polygon service_area
+        datetime effective_from
+        datetime effective_to
+    }
+    
+    ROUTE_SEGMENT {
+        uuid segment_id
+        uuid route_id
+        point start_point
+        point end_point
+        float typical_duration
+        json traffic_patterns
+    }
+    
+    PASSENGER ||--o{ JOURNEY : takes
+    PASSENGER {
+        uuid passenger_id
+        string preference_profile
+        json mobility_patterns
+        datetime created_at
+    }
+    
+    JOURNEY {
+        uuid journey_id
+        uuid passenger_id
+        point origin
+        point destination
+        timestamp request_time
+        timestamp start_time
+        timestamp end_time
+        json route_taken
+    }
+    
+    DEMAND_FORECAST {
+        uuid forecast_id
+        polygon area
+        datetime period_start
+        datetime period_end
+        int expected_demand
+        json confidence_metrics
+        string forecast_type
+    }
+    
+    SYSTEM_EVENT {
+        uuid event_id
+        string event_type
+        json payload
+        timestamp created_at
+        string source_service
+    }
+```
+
+Data storage implementation:
+
+1. **Real-time Telemetry**: Vehicle sensor data, environmental readings, and passenger counting data stream into InfluxDB, optimized for time-series data with high write loads.
+
+2. **Operational Data**: Vehicle status, routes, schedules, and maintenance information stored in MongoDB for flexible schema evolution and geospatial query support.
+
+3. **Network Topology**: Road network, route graphs, and connectivity models use Neo4j graph database to efficiently solve complex pathfinding problems.
+
+4. **Historical Analytics**: Raw data ultimately lands in a data lake (S3-compatible object storage) organized using the Delta Lake format for reliable ACID transactions and efficient querying.
+
+5. **Caching Layer**: Redis provides distributed caching for frequently accessed data like vehicle locations, schedules, and route information.
+
+### Real-time Data Processing Pipeline
+
+The system processes over 1TB of data daily with sub-second latency requirements for critical operations. The data pipeline architecture:
+
+```mermaid
+flowchart LR
+    subgraph "Data Sources"
+        VS["Vehicle Sensors"]
+        PS["Passenger Sensors"]
+        TS["Traffic Sensors"]
+        ES["Environmental Sensors"]
+        MS["Mobile Sensors"]
+    end
+    
+    subgraph "Ingestion Layer"
+        KI["Kafka Ingestion Cluster"]
+        SC["Schema Registry"]
+    end
+    
+    subgraph "Processing Layer"
+        direction TB
+        KS["Kafka Streams"]
+        SP["Spark Streaming"]
+        FL["Flink for CEP"]
+    end
+    
+    subgraph "Serving Layer"
+        TS_DB["InfluxDB for Time Series"]
+        RT_DB["Redis for Real-time Lookup"]
+        OLAP["Clickhouse for Analytics"]
+    end
+    
+    subgraph "Applications"
+        RM["Resource Management"]
+        RT["Route Optimization"]
+        DA["Demand Analytics"]
+        OM["Operations Monitoring"]
+    end
+    
+    Data Sources --> KI
+    KI --> SC
+    KI --> Processing Layer
+    Processing Layer --> Serving Layer
+    Serving Layer --> Applications
+```
+
+Key characteristics:
+
+1. **High Throughput**: The system processes 500K+ events per second during peak operations.
+
+2. **Low Latency**: Critical path decision making (safety-related) completes in <50ms, while adaptive routing decisions occur within 500ms.
+
+3. **Stream Processing**: Apache Kafka provides the messaging backbone with Apache Flink handling complex event processing for pattern detection.
+
+4. **Exactly-once Semantics**: Critical for financial transactions (fare collection) and vehicle dispatch decisions.
+
+### API and Integration Design
+
+The BAUTS exposes and consumes APIs through a well-defined interface layer:
+
+1. **Internal Service Communication**: gRPC with Protocol Buffers for efficient binary serialization between microservices.
+
+2. **External API Gateway**: RESTful APIs for passenger applications and third-party integrations with OpenAPI specifications.
+
+3. **Real-time Updates**: WebSockets for passenger applications requiring real-time vehicle locations and ETAs.
+
+4. **Vehicle Communication Protocols**:
+   - Standard vehicles: Integration via J1939/FMS standards
+   - Autonomous vehicles: Custom binary protocol over secure cellular connections
+   - V2X communication: DSRC and C-V2X protocols compliant with industry standards
+
+Sample API specifications (simplified):
+
+```yaml
+openapi: 3.0.0
+info:
+  title: BAUTS Passenger API
+  version: 1.0.0
+paths:
+  /journeys:
+    post:
+      summary: Request a new journey
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                origin:
+                  $ref: '#/components/schemas/GeoLocation'
+                destination:
+                  $ref: '#/components/schemas/GeoLocation'
+                departureTime:
+                  type: string
+                  format: date-time
+                preferences:
+                  $ref: '#/components/schemas/JourneyPreferences'
+      responses:
+        '201':
+          description: Journey created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Journey'
+  
+  /vehicles/{vehicleId}/location:
+    get:
+      summary: Get real-time vehicle location
+      parameters:
+        - name: vehicleId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Vehicle location
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VehicleLocation'
+```
+
+### Scalability and High Availability Architecture
+
+The BAUTS is designed for horizontal scalability and fault tolerance:
+
+1. **Kubernetes-based Orchestration**: All services deploy as Kubernetes workloads across multiple availability zones.
+
+2. **Regional Deployment Model**: 
+   - Primary region handles normal operations
+   - Secondary region maintains hot standby for disaster recovery
+   - Edge nodes deployed at major transit hubs for low-latency operations
+
+3. **Automated Scaling Policies**:
+   - Predictive scaling based on historical patterns (e.g., rush hour scaling executed proactively)
+   - Reactive scaling based on real-time metrics (CPU, memory, request queue length)
+   - Geographic scaling to handle location-specific demand surges
+
+4. **Resilience Patterns**:
+   - Persistent connection backoff strategies
+   - Distributed tracing with OpenTelemetry
+   - Chaos engineering practices to validate failure modes
+   - Automated canary deployments for risk mitigation
+
+### Privacy and Security Architecture
+
+The system implements a defense-in-depth security model:
+
+1. **Zero Trust Architecture**: All service-to-service communications require mutual TLS authentication.
+
+2. **Data Privacy**: 
+   - Sensitive passenger data encrypted at rest and in transit
+   - Personally identifiable information (PII) separated from operational data
+   - Automated data lifecycle management with configurable retention policies
+
+3. **Vehicle Security**:
+   - Hardware security modules (HSMs) for vehicle credential storage
+   - Secure boot process for onboard computers
+   - Encrypted communications with mutual authentication
+   - Over-the-air update framework with signed firmware packages
+
+4. **Regulatory Compliance**:
+   - GDPR-compliant data processing
+   - SOC2 Type II controls implemented throughout
+   - Regular penetration testing and vulnerability assessments
+
+### Technology Stack
+
+The BAUTS implementation relies on the following technology stack:
+
+**Infrastructure:**
+- Cloud Platform: AWS (primary), Azure (secondary)
+- Containerization: Docker
+- Orchestration: Kubernetes with custom operators
+- Service Mesh: Istio
+- API Gateway: Kong
+
+**Backend Services:**
+- Languages: Rust (performance-critical paths), Go (services), Python (data science)
+- Frameworks: Actix Web (Rust), Gin (Go), FastAPI (Python)
+- Event Streaming: Apache Kafka with Kafka Streams
+- Stream Processing: Apache Flink, Apache Spark Streaming
+
+**Data Storage:**
+- Time Series: InfluxDB
+- Document Store: MongoDB with geospatial indexes
+- Graph Database: Neo4j
+- Data Lake: AWS S3 with Delta Lake
+- Cache: Redis Cluster
+
+**Machine Learning:**
+- Training: TensorFlow, PyTorch
+- Deployment: ONNX Runtime, TensorFlow Serving
+- MLOps: MLflow, Kubeflow
+- Feature Store: Feast
+
+**Frontend Applications:**
+- Passenger App: Flutter (cross-platform mobile)
+- Driver Interface: React Native
+- Operations Center: React with TypeScript
+- Visualization: D3.js, Mapbox GL
+
+**DevOps and Monitoring:**
+- CI/CD: GitHub Actions, ArgoCD
+- Monitoring: Prometheus, Grafana
+- Logging: ELK Stack (Elasticsearch, Logstash, Kibana)
+- Tracing: Jaeger
+- Chaos Testing: Chaos Monkey
+
+### Deployment and CI/CD Pipeline
+
+The system uses a GitOps approach for deployment:
+
+```mermaid
+flowchart TD
+    Dev["Developer Commits"] --> GH["GitHub Repository"]
+    GH --> Actions["GitHub Actions"]
+    Actions --> Tests["Automated Tests<br>Unit/Integration"]
+    Tests --> Build["Container Build"]
+    Build --> Scan["Security Scanning<br>Trivy/Snyk"]
+    Scan --> Push["Push to Container Registry"]
+    Push --> Staging["Deploy to Staging"]
+    
+    Staging --> E2E["E2E Testing"]
+    E2E --> Approval["Manual Approval"]
+    Approval --> Prod["Deploy to Production"]
+    
+    subgraph "Continuous Delivery"
+        Prod --> Canary["Canary Deployment<br>5% Traffic"]
+        Canary --> Monitor["Automated Monitoring"]
+        Monitor --> Decision{Metrics OK?}
+        Decision -->|Yes| Full["Full Rollout"]
+        Decision -->|No| Rollback["Automatic Rollback"]
+    end
+    
+    subgraph "Observability"
+        Full --> Observe["Observe Performance"]
+        Observe --> Feedback["Feedback Loop"]
+        Feedback --> GH
+    end
+```
+
+Key features of the deployment pipeline:
+
+1. **Immutable Infrastructure**: Infrastructure defined as code using Terraform.
+
+2. **Environment Parity**: Development, staging, and production environments maintain configuration parity.
+
+3. **Automated Canary Analysis**: Automated progressive delivery with metrics-based promotion or rollback.
+
+4. **Blue/Green Deployments**: Zero-downtime deployments with instant rollback capability.
+
 ## Implementation Through Symbiotic Growth
 
 Rather than approaching implementation as a linear engineering project, I've designed a symbiotic evolution strategy where the new system grows within and alongside the existing transit infrastructure:
