@@ -16,56 +16,83 @@ We propose a complete transformation of the analytics infrastructure from batch 
 
 Our architecture creates a seamless flow from user actions to business insights:
 
-```
-┌──────────────┐    ┌──────────────┐    ┌───────────────┐    ┌──────────────┐    ┌───────────────┐
-│              │    │              │    │               │    │              │    │               │
-│    Event     │    │    Stream    │    │    Storage    │    │  API/Query   │    │ Visualization │
-│  Collection  │───▶│  Processing  │───▶│     Layer     │───▶│    Layer     │───▶│     Layer     │
-│              │    │              │    │               │    │              │    │               │
-└──────────────┘    └──────────────┘    └───────────────┘    └──────────────┘    └───────────────┘
-        │                  │                    │                   │                    │
-        ▼                  ▼                    ▼                   ▼                    ▼
-┌──────────────┐    ┌──────────────┐    ┌───────────────┐    ┌──────────────┐    ┌───────────────┐
-│ Web/Mobile   │    │ Apache Kafka │    │  ClickHouse   │    │   GraphQL    │    │  React-based  │
-│ SDK + Event  │    │ Apache Flink │    │     Redis     │    │    API       │    │  Dashboards   │
-│ Collectors   │    │              │    │  Object Store │    │    Cache     │    │  & Alerts     │
-└──────────────┘    └──────────────┘    └───────────────┘    └──────────────┘    └───────────────┘
-       
-        ┌───────────────────────────────── Data Flow ─────────────────────────────┐
-        │                                                                         │
-        │                    ┌─────────────────────────────────┐                  │
-        │                    │      User Engagement Events     │                  │
-        │                    └─────────────────────────────────┘                  │
-        │                                    │                                    │
-        │                                    ▼                                    │
-        │           ┌─────────────────────────────────────────────────┐          │
-        │           │                  Apache Kafka                    │          │
-        │           │  (User Events, Content Events, Ad Events Topics) │          │
-        │           └─────────────────────────────────────────────────┘          │
-        │                                    │                                    │
-        │           ┌───────────────────────┴────────────────────────┐           │
-        │           │                                                │           │
-        │           ▼                                                ▼           │
-┌─────────────────────────────────┐                      ┌─────────────────────────────┐
-│      Real-time Processing       │                      │    Analytical Processing    │
-│          (Apache Flink)         │                      │         (Batch Jobs)        │
-└─────────────────────────────────┘                      └─────────────────────────────┘
-        │                                                             │
-        │                                                             │
-        ▼                                                             ▼
-┌─────────────────────────────────┐                      ┌─────────────────────────────┐
-│       Real-time Metrics         │                      │     Historical Analytics    │
-│           (Redis)               │                      │        (ClickHouse)         │
-└─────────────────────────────────┘                      └─────────────────────────────┘
-        │                                                             │
-        │                                                             │
-        └───────────────────────────┬─────────────────────────────────┘
-                                    │
-                                    ▼
-                      ┌─────────────────────────────────┐
-                      │        Analytics Dashboard      │
-                      │   (Real-time & Historical)      │
-                      └─────────────────────────────────┘
+```mermaid
+flowchart TD
+    subgraph Sources["User Interaction Sources"]
+        Mobile["Mobile Apps"]
+        Web["Web Platform"]
+        API["External APIs"]
+    end
+
+    subgraph Collection["Event Collection"]
+        SDK["Client SDKs"]
+        Collectors["Event Collectors"]
+        Validation["Data Validation & Enrichment"]
+    end
+
+    subgraph Streaming["Stream Processing"]
+        Kafka["Apache Kafka"]
+        Flink["Apache Flink"]
+        Topics["Topic Segregation<br>(User/Content/Ads)"]
+    end
+
+    subgraph Storage["Storage Layer"]
+        ClickHouse["ClickHouse<br>(Analytics Database)"]
+        Redis["Redis<br>(Real-time Cache)"]
+        S3["Object Storage<br>(Archive)"]
+    end
+
+    subgraph Query["Query & API Layer"]
+        GraphQL["GraphQL API"]
+        Cache["Multi-tier Cache"]
+        QueryEngine["Query Optimization"]
+    end
+
+    subgraph Viz["Visualization Layer"]
+        Dashboards["React Dashboards"]
+        Alerts["Real-time Alerts"]
+        Reports["Automated Reports"]
+    end
+
+    %% Connections
+    Mobile --> SDK
+    Web --> SDK
+    API --> Collectors
+    
+    SDK --> Collectors
+    Collectors --> Validation
+    Validation --> Kafka
+    
+    Kafka --> Topics
+    Topics --> Flink
+    
+    Flink --> ClickHouse
+    Flink --> Redis
+    Kafka --> S3
+    
+    ClickHouse --> QueryEngine
+    Redis --> Cache
+    QueryEngine --> GraphQL
+    Cache --> GraphQL
+    
+    GraphQL --> Dashboards
+    GraphQL --> Alerts
+    GraphQL --> Reports
+
+    %% Styling
+    classDef sources fill:#ffecb3,stroke:#ff9800,stroke-width:2px
+    classDef collection fill:#e3f2fd,stroke:#2196f3,stroke-width:2px
+    classDef streaming fill:#e8f5e9,stroke:#4caf50,stroke-width:2px
+    classDef storage fill:#f3e5f5,stroke:#9c27b0,stroke-width:2px
+    classDef query fill:#f5f5f5,stroke:#9e9e9e,stroke-width:2px
+    classDef viz fill:#fce4ec,stroke:#e91e63,stroke-width:2px
+    
+    class Sources,Mobile,Web,API sources
+    class Collection,SDK,Collectors,Validation collection
+    class Streaming,Kafka,Flink,Topics streaming
+    class Storage,ClickHouse,Redis,S3 storage
+    class Query,GraphQL,Cache,QueryEngine query
+    class Viz,Dashboards,Alerts,Reports viz
 ```
 
 The system comprises five integrated layers:
@@ -90,6 +117,46 @@ A flexible API layer with intelligent caching strategies ensures dashboard compo
 
 **5. Visualization**
 React-based dashboards present insights through specialized visualizations including time-series charts, heat maps, and real-time leaderboards.
+
+## Data Flow Visualization
+
+To better understand how events move through the system, here's a sequence diagram showing the real-time processing flow:
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant Client as Mobile/Web App
+    participant Collector as Event Collector
+    participant Kafka
+    participant Flink
+    participant Redis
+    participant ClickHouse
+    participant Dashboard
+
+    User->>Client: Create content/interaction
+    Client->>Collector: Send event batch
+    Collector->>Kafka: Publish validated events
+    Note over Kafka,Flink: Event streaming (<100ms)
+    
+    par Processing Paths
+        Kafka->>Flink: Topic detection job
+        Flink->>Redis: Update trending topics
+        
+        Kafka->>Flink: Session analysis job
+        Flink->>ClickHouse: Store session metrics
+        Flink->>Redis: Cache user metrics
+        
+        Kafka->>Flink: Ad performance job
+        Flink->>ClickHouse: Store ad analytics
+        Flink->>Redis: Update campaign KPIs
+    end
+    
+    Dashboard->>Redis: Query real-time metrics
+    Redis->>Dashboard: Return cached data (<5ms)
+    Dashboard->>User: Display insights
+    
+    Note over User,Dashboard: Total latency <5 seconds
+```
 
 ## Technology Selection: Why These Tools?
 
@@ -172,25 +239,6 @@ The dashboard provides real-time insights through:
 - Components that update automatically as new data arrives
 - Customizable views for different business teams
 - Export capabilities for deeper analysis
-
-### 4. Performance Optimization
-
-Several key optimizations ensure the system scales effectively:
-
-**Kafka optimization:**
-- Appropriate retention configuration based on replay requirements
-- Producer batching for throughput with acceptable latency tradeoffs
-- Compression for efficient network utilization
-
-**Flink tuning:**
-- Checkpoint frequency balanced for recovery time and processing overhead
-- Operator chaining to minimize serialization costs
-- Parallelism adjustments based on observed traffic patterns
-
-**ClickHouse refinements:**
-- Materialized views for common aggregation patterns
-- TTL policies tailored to different data categories
-- Query optimization through proper indexing and partition design
 
 ## Business Impact
 
