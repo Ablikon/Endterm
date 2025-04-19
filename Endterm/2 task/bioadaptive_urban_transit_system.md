@@ -345,9 +345,6 @@ This dynamic approach maintains autonomous operation for 94% of service hours wh
 
 ## Technical System Design
 
-### High-Level System Overview
-
-The complete BioAdaptive Urban Transit System integrates all components into a comprehensive biomimetic framework:
 
 ```mermaid
 flowchart TD
