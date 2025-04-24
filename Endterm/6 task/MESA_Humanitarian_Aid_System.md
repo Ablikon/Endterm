@@ -754,12 +754,22 @@ graph TD
     FedGW --- BackupSys
     
     %% Define connection types
-    linkStyle 0,1,2,3,4,5,6,7,8,9,10,11,12 stroke:#0a6522,stroke-width:2px; %% Mesh connections
-    linkStyle 13,14,15,16,17,18,19,20,21 stroke:#5d001e,stroke-width:2px,stroke-dasharray: 5 5; %% Intermittent connections
-    linkStyle 22,23 stroke:#0d47a1,stroke-width:2px; %% Sync station connections
-    linkStyle 24,25,26 stroke:#880e4f,stroke-width:2px; %% Regional hub connections
-    linkStyle 27 stroke:#f57f17,stroke-width:2px,stroke-dasharray: 10 10; %% Optional global connections
-    linkStyle 28,29,30 stroke:#f57f17,stroke-width:2px; %% Federation connections
+    %% Mesh connections
+    linkStyle 0,1,2,3,4,5,6 stroke:#0a6522,stroke-width:2px
+    %% Distribution center connections
+    linkStyle 7,8,9 stroke:#0a6522,stroke-width:2px
+    %% Trust node connections
+    linkStyle 10,11,12 stroke:#0a6522,stroke-width:2px
+    %% Intermittent connections
+    linkStyle 13,14,15,16,17 stroke:#5d001e,stroke-width:2px,stroke-dasharray: 5 5
+    %% Sync station connections
+    linkStyle 18,19,20,21,22 stroke:#0d47a1,stroke-width:2px
+    %% Regional hub connections
+    linkStyle 23,24,25,26 stroke:#880e4f,stroke-width:2px
+    %% Optional global connection
+    linkStyle 27 stroke:#f57f17,stroke-width:2px,stroke-dasharray: 10 10
+    %% Federation connections
+    linkStyle 28,29,30 stroke:#f57f17,stroke-width:2px
     
     %% Styling
     classDef field fill:#d3f8e2,stroke:#0a6522,stroke-width:2px
