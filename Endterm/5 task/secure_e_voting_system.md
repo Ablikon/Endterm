@@ -78,106 +78,91 @@
 
 ## System Architecture Overview
 
-The proposed e-voting system implements a cellular blockchain architecture that balances security, scalability, and verifiability while ensuring vote privacy and system resilience.
+The proposed e-voting system implements a hierarchical cellular architecture that balances security, scalability, and verifiability while ensuring vote privacy and system resilience.
 
 ```mermaid
 flowchart TD
+    %% Simplified Main Components
     subgraph "National Layer"
-        NTG[National Tally Gateway]
-        NVM[National Verification Mechanism]
-        AOC[Audit Oversight Center]
-        ARC[Archival Records Center]
+        NationalCore["National Core System"]
+        NationalCore -->|"Final\nResults"| ResultsPortal["Results & Transparency Portal"]
     end
     
     subgraph "Regional Layer"
-        RCA1[Regional Cell Aggregator 1]
-        RCA2[Regional Cell Aggregator 2]
-        RCA3[Regional Cell Aggregator 3]
-        RVS[Regional Verification System]
+        Region1["Region 1 Coordinator"]
+        Region2["Region 2 Coordinator"]
+        Region3["Region 3 Coordinator"]
     end
     
-    subgraph "Cellular Layer"
-        subgraph "Cell Group 1"
-            VCS11[Voting Cell Server 1-1]
-            VCS12[Voting Cell Server 1-2]
-            VCS13[Voting Cell Server 1-3]
-        end
-        
-        subgraph "Cell Group 2"
-            VCS21[Voting Cell Server 2-1]
-            VCS22[Voting Cell Server 2-2]
-            VCS23[Voting Cell Server 2-3]
-        end
-        
-        subgraph "Cell Group 3"
-            VCS31[Voting Cell Server 3-1]
-            VCS32[Voting Cell Server 3-2]
-            VCS33[Voting Cell Server 3-3]
-        end
+    subgraph "Voting Cells Layer"
+        Cell1["Voting Cell 1"]
+        Cell2["Voting Cell 2"]
+        Cell3["Voting Cell 3"]
+        Cell4["Voting Cell 4"]
+        Cell5["Voting Cell 5"]
+        Cell6["Voting Cell 6"]
     end
     
     subgraph "Voter Interface Layer"
-        VT[Voting Terminals]
-        RA[Remote Applications]
-        AAS[Assisted Access Stations]
+        VotingTerminals["Voting Terminals"]
+        RemoteApps["Remote Applications"]
+        AssistiveDevices["Assistive Devices"]
     end
     
-    subgraph "Identity Management Layer"
-        IDV[Identity Verification]
-        TVG[Token/Voucher Generation]
-        BAS[Biometric Authentication System]
+    %% Simplified Security Services
+    subgraph "Security & Identity Services"
+        IdentityMgmt["Identity Management"]
+        CryptoServices["Cryptographic Services"]
     end
     
-    subgraph "Security Services Layer"
-        E2E[End-to-End Encryption]
-        ZKP[Zero-Knowledge Proofs]
-        HMS[Hardware Security Modules]
-        TDS[Tamper Detection System]
-        HA[Homomorphic Aggregation]
-    end
+    %% Essential Connections
+    VotingTerminals & RemoteApps & AssistiveDevices -->|"Encrypted\nVotes"| Cell1 & Cell2 & Cell3 & Cell4 & Cell5 & Cell6
     
-    %% Connections between layers
-    IDV --> TVG
-    TVG --> VT & RA & AAS
-    BAS --> IDV
+    %% Regional Aggregation
+    Cell1 & Cell2 -->|"Aggregated\nResults"| Region1
+    Cell3 & Cell4 -->|"Aggregated\nResults"| Region2
+    Cell5 & Cell6 -->|"Aggregated\nResults"| Region3
     
-    VT & RA & AAS --> VCS11 & VCS12 & VCS13 & VCS21 & VCS22 & VCS23 & VCS31 & VCS32 & VCS33
+    %% National Aggregation
+    Region1 & Region2 & Region3 -->|"Verified\nTotals"| NationalCore
     
-    VCS11 & VCS12 & VCS13 --> RCA1
-    VCS21 & VCS22 & VCS23 --> RCA2
-    VCS31 & VCS32 & VCS33 --> RCA3
+    %% Security Integrations
+    IdentityMgmt -->|"Verification"| VotingTerminals & RemoteApps & AssistiveDevices
+    CryptoServices -->|"Encryption &\nZero-Knowledge\nProofs"| Cell1 & Cell2 & Cell3 & Cell4 & Cell5 & Cell6
+    CryptoServices -.->|"Homomorphic\nOperations"| Region1 & Region2 & Region3
+    CryptoServices -.->|"Threshold\nDecryption"| NationalCore
     
-    RCA1 & RCA2 & RCA3 --> NTG
-    RCA1 & RCA2 & RCA3 --> RVS
-    
-    NTG --> NVM
-    RVS --> NVM
-    
-    NVM --> AOC
-    NTG --> ARC
-    
-    %% Security services connections
-    E2E -.-> VT & RA & AAS & VCS11 & VCS12 & VCS13 & VCS21 & VCS22 & VCS23 & VCS31 & VCS32 & VCS33
-    ZKP -.-> VCS11 & VCS12 & VCS13 & VCS21 & VCS22 & VCS23 & VCS31 & VCS32 & VCS33 & RCA1 & RCA2 & RCA3 & NVM
-    HMS -.-> TVG & IDV & VCS11 & VCS12 & VCS13 & VCS21 & VCS22 & VCS23 & VCS31 & VCS32 & VCS33 & NTG
-    TDS -.-> VCS11 & VCS12 & VCS13 & VCS21 & VCS22 & VCS23 & VCS31 & VCS32 & VCS33 & RCA1 & RCA2 & RCA3 & NTG
-    HA -.-> VCS11 & VCS12 & VCS13 & VCS21 & VCS22 & VCS23 & VCS31 & VCS32 & VCS33 & RCA1 & RCA2 & RCA3 & NTG
+    %% Voter Verification Path
+    Cell1 & Cell2 & Cell3 & Cell4 & Cell5 & Cell6 -->|"Verification\nReceipts"| VotingTerminals & RemoteApps & AssistiveDevices
+    NationalCore -->|"Proof\nPublication"| ResultsPortal
     
     %% Styling
-    classDef national fill:#f9d5e5,stroke:#333,stroke-width:2px
-    classDef regional fill:#eeeeee,stroke:#333,stroke-width:2px
-    classDef cellular fill:#e3f2fd,stroke:#333,stroke-width:2px
-    classDef voter fill:#d0f0c0,stroke:#333,stroke-width:2px
-    classDef identity fill:#fff8dc,stroke:#333,stroke-width:2px
-    classDef security fill:#ffcccb,stroke:#333,stroke-width:2px
+    classDef national fill:#f8d7da,stroke:#333,stroke-width:2px
+    classDef region fill:#d1ecf1,stroke:#333,stroke-width:2px
+    classDef cell fill:#d4edda,stroke:#333,stroke-width:2px
+    classDef voter fill:#fff3cd,stroke:#333,stroke-width:2px
+    classDef security fill:#e2e3e5,stroke:#333,stroke-width:2px
     
-    class NTG,NVM,AOC,ARC national
-    class RCA1,RCA2,RCA3,RVS regional
-    class VCS11,VCS12,VCS13,VCS21,VCS22,VCS23,VCS31,VCS32,VCS33 cellular
-    class VT,RA,AAS voter
-    class IDV,TVG,BAS identity
-    class E2E,ZKP,HMS,TDS,HA security
+    class NationalCore,ResultsPortal national
+    class Region1,Region2,Region3 region
+    class Cell1,Cell2,Cell3,Cell4,Cell5,Cell6 cell
+    class VotingTerminals,RemoteApps,AssistiveDevices voter
+    class IdentityMgmt,CryptoServices security
 ```
+
+The architecture features five primary layers:
+
+1. **Voter Interface Layer**: The entry points where voters interact with the system, including physical voting terminals in polling stations, secure remote applications, and specialized assistive devices for voters with disabilities.
+
+2. **Voting Cells Layer**: The core processing units that handle vote collection, encryption, and verification. Each cell serves a limited geographic area (50,000-200,000 voters) and operates an independent blockchain to record encrypted votes.
+
+3. **Regional Layer**: Coordinators that aggregate and verify results from multiple voting cells. They perform inter-cell consistency checks without decrypting individual votes, using homomorphic operations.
+
+4. **National Layer**: The final aggregation point that produces official results after threshold cryptographic operations. This layer includes transparency mechanisms for public verification.
+
+5. **Security & Identity Services**: Cross-cutting services that provide authentication, encryption, and cryptographic proof generation. These services ensure vote secrecy and system integrity throughout all layers.
+
+This cellular design provides inherent scalability, resilience, and security by compartmentalizing the electorate while maintaining cryptographic verifiability across the entire system.
 
 ## Core System Components
 
