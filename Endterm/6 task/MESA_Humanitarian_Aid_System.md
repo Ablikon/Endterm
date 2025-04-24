@@ -557,7 +557,156 @@ MESA's novel consensus mechanism doesn't require immediate agreement, instead al
 
 ## 10. Technical System Design: Detailed Architecture
 
-### 10.1 Component Architecture: Modular Design
+### 10.1 Comprehensive System Architecture Overview
+
+```mermaid
+flowchart TD
+    %% External Actors
+    Recipient([Aid Recipient]) -.-> |"Registers/\nReceives Aid"| FieldLevel
+    Worker([Aid Worker]) -.-> |"Manages\nDistribution"| FieldLevel
+    OrgAdmin([Organization Admin]) -.-> |"Oversees\nOperations"| OrgLevel
+    Auditor([External Auditor]) -.-> |"Verifies\nTransparency"| FedLevel
+
+    %% System Layers
+    subgraph MESA["MESA System Architecture"]
+        direction TB
+        
+        subgraph FieldLevel["Field Level (Offline Capable)"]
+            MFU["Mobile Field Units"]
+            SIT["Sovereign ID Tokens"]
+            CTN["Community Trust Nodes"]
+        end
+        
+        subgraph DataServices["Core Data Services"]
+            CRDT["CRDT Data Layer"]
+            IdentityMgmt["Identity Management"]
+            AidMgmt["Aid Distribution Management"]
+            Sync["Synchronization Services"]
+        end
+        
+        subgraph OrgLevel["Organizational Level"]
+            OrgDB["Organizational Database"]
+            Analytics["Analytics Engine"]
+            Reports["Reporting System"]
+            IntegrationAPI["Integration APIs"]
+        end
+        
+        subgraph FedLevel["Federation Level (Cross-Organizational)"]
+            DeduplicationSvc["Deduplication Services"]
+            CrossOrgRegistry["Cross-Org Registry"]
+            ConsentMgmt["Consent Management"]
+            AuditServices["Audit Services"]
+        end
+        
+        subgraph SecurityLayer["Security & Privacy (Cross-Cutting)"]
+            Crypto["Cryptographic Services"]
+            ZKP["Zero-Knowledge Proofs"]
+            AccessControl["Access Control"]
+            Encryption["End-to-End Encryption"]
+        end
+    end
+    
+    %% Key Data Flows
+    MFU <--> |"Biometric\nRegistration"| IdentityMgmt
+    MFU <--> |"Aid\nDistribution"| AidMgmt
+    MFU <--> |"Trust\nAttestation"| CTN
+    SIT <--> |"Verify\nIdentity"| MFU
+    
+    CTN <--> |"Opportunistic\nSync"| Sync
+    CTN <--> |"Local\nConsensus"| CRDT
+    
+    IdentityMgmt <--> |"Identity\nData"| CRDT
+    AidMgmt <--> |"Distribution\nRecords"| CRDT
+    Sync <--> |"Conflict\nResolution"| CRDT
+    
+    CRDT <--> |"Eventual\nConsistency"| OrgDB
+    OrgDB --> Analytics
+    Analytics --> Reports
+    OrgDB <--> IntegrationAPI
+    
+    IntegrationAPI <--> DeduplicationSvc
+    IntegrationAPI <--> CrossOrgRegistry
+    DeduplicationSvc <--> CrossOrgRegistry
+    ConsentMgmt <--> CrossOrgRegistry
+    CrossOrgRegistry <--> AuditServices
+    
+    %% Security Interactions (Cross-cutting)
+    SecurityLayer -.-> FieldLevel
+    SecurityLayer -.-> DataServices
+    SecurityLayer -.-> OrgLevel
+    SecurityLayer -.-> FedLevel
+    
+    %% Offline & Online Zones
+    classDef offline fill:#f9d5e5,stroke:#5d001e,stroke-width:2px
+    classDef core fill:#d3f8e2,stroke:#0a6522,stroke-width:2px
+    classDef org fill:#e3f2fd,stroke:#0d47a1,stroke-width:2px
+    classDef federation fill:#fff8e1,stroke:#f57f17,stroke-width:2px
+    classDef security fill:#fce4ec,stroke:#880e4f,stroke-width:1px,stroke-dasharray: 5 5
+    classDef external fill:#f5f5f5,stroke:#616161,stroke-width:1px
+    
+    class FieldLevel,MFU,SIT,CTN offline
+    class DataServices,CRDT,IdentityMgmt,AidMgmt,Sync core
+    class OrgLevel,OrgDB,Analytics,Reports,IntegrationAPI org
+    class FedLevel,DeduplicationSvc,CrossOrgRegistry,ConsentMgmt,AuditServices federation
+    class SecurityLayer,Crypto,ZKP,AccessControl,Encryption security
+    class Recipient,Worker,OrgAdmin,Auditor external
+    
+    %% Connectivity Boundaries
+    subgraph OfflineCapable ["Always Offline Capable"]
+        FieldLevel
+    end
+    
+    subgraph IntermittentConnectivity ["Intermittent Connectivity"]
+        DataServices
+    end
+    
+    subgraph OnlinePreferred ["Online Preferred (Graceful Degradation)"]
+        OrgLevel
+        FedLevel
+    end
+    
+    classDef boundary fill:none,stroke:#9e9e9e,stroke-width:1px,stroke-dasharray: 5 5
+    class OfflineCapable,IntermittentConnectivity,OnlinePreferred boundary
+```
+
+The comprehensive system architecture diagram illustrates how MESA functions as an integrated system across multiple operational tiers:
+
+1. **Field Level (Always Offline Capable)**
+   - Mobile Field Units, Sovereign ID Tokens, and Community Trust Nodes operate at the edge
+   - Functions fully without connectivity to enable humanitarian operations in any environment
+   - Manages direct interactions with recipients, including registration and aid distribution
+
+2. **Core Data Services (Intermittent Connectivity)**
+   - CRDT Data Layer provides conflict-free data management across the system
+   - Identity Management handles biometric processing and verification
+   - Aid Distribution Management coordinates resources and eligibility
+   - Synchronization Services enable data movement between disconnected components
+
+3. **Organizational Level (Online Preferred)**
+   - Organizational databases aggregate data when connectivity is available
+   - Analytics and reporting provide operational insights
+   - Integration APIs enable connections to existing systems and processes
+   - Gracefully degrades when connectivity is interrupted
+
+4. **Federation Level (Cross-Organizational)**
+   - Enables coordination between multiple aid organizations
+   - Deduplication services prevent multiple registrations
+   - Cross-organizational registry maintains consistency
+   - Consent management enforces recipient data rights across boundaries
+
+5. **Security & Privacy (Cross-Cutting)**
+   - Cryptographic services secure all transactions
+   - Zero-knowledge proofs enable verification without exposure
+   - Access control enforces permissions across the system
+   - End-to-end encryption protects data in transit and at rest
+
+This architecture achieves decentralized trust through:
+- Multiple verification paths (biometric, social, cryptographic)
+- Distributed data storage with no single point of control
+- Cryptographic proofs that can be verified without central authority
+- Community-based attestation replacing institutional verification
+
+### 10.2 Component Architecture: Modular Design
 
 ```mermaid
 flowchart TD
@@ -661,7 +810,7 @@ The component architecture follows a modular design approach where:
    - Consent management enforcing recipient-defined data sharing policies
    - Anonymization engine for privacy-preserving analytics
 
-### 10.2 Deployment Topology: Fieldable Infrastructure
+### 10.3 Deployment Topology: Fieldable Infrastructure
 
 ```mermaid
 graph TD
@@ -776,7 +925,7 @@ graph TD
     classDef distribution fill:#f9d5e5,stroke:#5d001e,stroke-width:2px
     classDef trust fill:#fff8e1,stroke:#f57f17,stroke-width:2px
     classDef sync fill:#e3f2fd,stroke:#0d47a1,stroke-width:2px
-    classDef regional fill:#bbdefb,stroke:#0d47a1,stroke-width:2px
+    classDef regional fill:#bbdefb,stroke:#0a6522,stroke-width:2px
     classDef global fill:#f8bbd0,stroke:#880e4f,stroke-width:2px
     
     class MU1,MU2,MU3,MU4,MU5,FieldOperations field
