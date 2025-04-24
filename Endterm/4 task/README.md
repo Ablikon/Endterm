@@ -104,197 +104,24 @@ AdaptiveShield consists of several key components:
 - For visualization issues, ensure all Dash/Plotly dependencies are installed
 - Port conflicts can be resolved by editing the port numbers in each example file
 
-![Adaptive Shield Architecture](docs/architecture_diagram.png)
-
-## The Problem
-
-Microservice APIs often face performance degradation during traffic spikes due to uncontrolled request bursts from clients. Standard rate limiting solutions typically implement a single algorithm with static configuration parameters, which leads to either:
-
-- **Overly restrictive limits** that block legitimate traffic during normal operations
-- **Ineffective protection** during unexpected traffic patterns or sophisticated abuse scenarios
-- **Inability to adapt** to changing client behaviors and evolving application requirements
-
-## Our Solution
-
-AdaptiveShield implements a multi-layered approach to rate limiting that combines several key features:
-
-### Multiple Rate Limiting Strategies
-
-- **Token Bucket**: Efficiently handles burst traffic while maintaining average rate
-- **Sliding Window**: Provides more accurate counting than fixed windows with less memory usage
-- **Leaky Bucket**: Ensures consistent output rate regardless of input bursts
-- **Adaptive Window**: Dynamically adjusts limits based on traffic patterns
-
-### Advanced Configuration Options
-
-- Global defaults
-- Route-specific limits
-- Client-specific limits
-- Combined client+route limits
-
-### Adaptive Capabilities
-
-- Automatically adjusts to traffic patterns
-- Monitors system performance
-- Optimizes limits based on actual usage
-
-### Comprehensive Metrics
-
-- Real-time traffic monitoring
-- Historical trends
-- Client-specific analytics
-- Route-specific analytics
-
-## Getting Started
-
-### Installation
-
-```bash
-pip install -r requirements.txt
-```
-
-### Basic Usage
-
-Here's a simple example using AdaptiveShield with Flask:
-
-```python
-from flask import Flask, request
-from adaptive_shield import AdaptiveShield, RateLimitStrategy
-
-app = Flask(__name__)
-shield = AdaptiveShield(
-    default_limit=100,
-    default_window=60,
-    default_strategy=RateLimitStrategy.TOKEN_BUCKET
-)
-
-shield.set_route_limit("/api/public", 200, 60, RateLimitStrategy.SLIDING_WINDOW)
-shield.set_route_limit("/api/users", 50, 60, RateLimitStrategy.LEAKY_BUCKET)
-shield.set_route_limit("/api/admin", 20, 60, RateLimitStrategy.ADAPTIVE_WINDOW)
-
-@app.route('/api/users')
-def users_endpoint():
-    client_id = request.headers.get('X-API-Key', 'anonymous')
-    allowed = shield.check_request(client_id, '/api/users')
-    
-    if not allowed:
-        return {"error": "Rate limit exceeded"}, 429
-        
-    return {"status": "success", "data": [...]}
-```
-
-## Included Examples
-
-This repository includes several examples to help you get started:
-
-### 1. Flask Example (`flask_example.py`)
-
-A complete Flask application demonstrating:
-- How to integrate AdaptiveShield with Flask
-- Implementing rate limiting as a decorator
-- Managing client identification
-- Handling rate limit violations properly
-
-### 2. FastAPI Example (`example_service.py`)
-
-A FastAPI microservice showing:
-- Integration with FastAPI dependency injection
-- Advanced rate limiting configurations
-- Detailed metrics endpoints
-
-### 3. Benchmark Tool (`benchmark.py`)
-
-A comprehensive benchmarking utility to:
-- Compare different rate limiting strategies
-- Measure performance under various load patterns
-- Visualize how each strategy handles traffic spikes
-
-### 4. Dashboard (`dashboard.py`)
-
-A real-time monitoring dashboard built with Dash that provides:
-- Live traffic visualization
-- Rate limit configuration interface
-- Traffic simulation tools
-- Metrics displays
-
-### 5. Distributed Example (`distributed_example.py`)
-
-A Redis-backed implementation for distributed deployments:
-- Shared rate limiting state across multiple application instances
-- Atomic operations using Redis Lua scripts
-- Instance-aware monitoring
-
-## Configuration Options
-
-### Rate Limiting Strategies
-
-| Strategy | Description | Best For |
-|----------|-------------|----------|
-| Token Bucket | Allows bursts while maintaining average rate | General purpose, API endpoints with occasional bursts |
-| Sliding Window | More accurate than fixed windows, less memory than sliding logs | High precision counting, smooth limiting |
-| Leaky Bucket | Ensures constant outflow rate | Protecting downstream services, steady traffic flow |
-| Adaptive Window | Dynamically adjusts based on traffic patterns | Varying workloads, systems with changing traffic patterns |
-
-### Limits Configuration
-
-```python
-
-shield = AdaptiveShield(
-    default_limit=100, 
-    default_window=60, 
-    default_strategy=RateLimitStrategy.TOKEN_BUCKET
-)
-
-shield.set_route_limit(
-    route="/api/users",
-    limit=50,
-    window=60,
-    strategy=RateLimitStrategy.LEAKY_BUCKET
-)
-
-shield.set_client_limit(
-    client_id="premium_user_123",
-    limit=500,
-    window=60
-)
-
-
-shield.set_client_route_limit(
-    client_id="premium_user_123",
-    route="/api/data",
-    limit=200,
-    window=60
-)
-```
-
 ## Architecture
 
 AdaptiveShield uses a layered architecture to provide flexibility and performance:
 
-```
-┌─────────────────────────────────────────┐
-│             AdaptiveShield              │
-├─────────────────────────────────────────┤
-│                                         │
-│  ┌─────────────┐      ┌──────────────┐  │
-│  │ Rate Limit  │      │  Monitoring  │  │
-│  │ Strategies  │◄────►│   & Metrics  │  │
-│  └─────────────┘      └──────────────┘  │
-│         ▲                    ▲          │
-│         │                    │          │
-│         ▼                    │          │
-│  ┌─────────────┐             │          │
-│  │   Client &  │             │          │
-│  │Route Manager│             │          │
-│  └─────────────┘             │          │
-│         ▲                    │          │
-│         │                    ▼          │
-│         │              ┌──────────────┐ │
-│         └────────────► │  Adaptation  │ │
-│                        │    Engine    │ │
-│                        └──────────────┘ │
-│                                         │
-└─────────────────────────────────────────┘
+```mermaid
+flowchart TD
+    subgraph AdaptiveShield ["AdaptiveShield"]
+        RLS[Rate Limit Strategies] <--> MM[Monitoring & Metrics]
+        RLS <--> CRM[Client & Route Manager]
+        CRM <--> AE[Adaptation Engine]
+        MM --> AE
+    end
+
+    style AdaptiveShield fill:#f5f5f5,stroke:#333,stroke-width:2px
+    style RLS fill:#d4f1f9,stroke:#333
+    style MM fill:#d4f1f9,stroke:#333
+    style CRM fill:#d4f1f9,stroke:#333
+    style AE fill:#d4f1f9,stroke:#333
 ```
 
 ## Metrics and Monitoring
