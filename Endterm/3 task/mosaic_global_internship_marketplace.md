@@ -282,6 +282,420 @@ flowchart TD
     class IntegrationLayer,EducationVerification,VisaIntegration,PaymentGateway,TranslationAPI,IdentityVerification integration
 ```
 
+### Detailed System Architecture
+
+To illustrate the technical implementation more concretely, here's a detailed deployment architecture showing how the system components are realized across cloud infrastructure:
+
+```mermaid
+flowchart TD
+    subgraph "Client Layer"
+        WebClients["Web Browsers"]
+        MobileClients["Mobile Apps"]
+        ThirdPartyApps["Third-Party Applications"]
+    end
+
+    subgraph "Edge Layer"
+        CDN["Content Delivery Network"]
+        WAF["Web Application Firewall"]
+        DDoSProtection["DDoS Protection"]
+    end
+
+    subgraph "API Gateway Layer"
+        LoadBalancer["Load Balancer"]
+        APIGateway["API Gateway (Kong)"]
+        RateLimiter["Rate Limiter"]
+        AuthZ["Authorization Service"]
+    end
+
+    subgraph "Regional Deployment: Americas"
+        subgraph "Service Mesh (Americas)"
+            ServiceDiscoveryAM["Service Discovery"]
+            CircuitBreakerAM["Circuit Breaker"]
+            APIServicesAM["Containerized Microservices"]
+        end
+        
+        subgraph "Data Tier (Americas)"
+            PrimaryDBsAM["Primary Databases"]
+            CacheAM["Redis Cache Cluster"]
+            QueueAM["Kafka Message Queue"]
+        end
+    end
+
+    subgraph "Regional Deployment: Europe"
+        subgraph "Service Mesh (Europe)"
+            ServiceDiscoveryEU["Service Discovery"]
+            CircuitBreakerEU["Circuit Breaker"]
+            APIServicesEU["Containerized Microservices"]
+        end
+        
+        subgraph "Data Tier (Europe)"
+            PrimaryDBsEU["Primary Databases"]
+            CacheEU["Redis Cache Cluster"]
+            QueueEU["Kafka Message Queue"]
+        end
+    end
+
+    subgraph "Regional Deployment: Asia-Pacific"
+        subgraph "Service Mesh (Asia-Pacific)"
+            ServiceDiscoveryAP["Service Discovery"]
+            CircuitBreakerAP["Circuit Breaker"]
+            APIServicesAP["Containerized Microservices"]
+        end
+        
+        subgraph "Data Tier (Asia-Pacific)"
+            PrimaryDBsAP["Primary Databases"]
+            CacheAP["Redis Cache Cluster"]
+            QueueAP["Kafka Message Queue"]
+        end
+    end
+
+    subgraph "Global Services"
+        subgraph "Storage Layer"
+            DocumentStore["Document Storage (S3)"]
+            DatabaseBackups["Database Backups"]
+            ArchiveStorage["Archive & Compliance Storage"]
+        end
+        
+        subgraph "Machine Learning Infrastructure"
+            MLTraining["ML Training Cluster"]
+            ModelRegistry["Model Registry"]
+            MLInference["ML Inference Services"]
+        end
+        
+        subgraph "DevOps & Monitoring"
+            Logging["Logging (ELK Stack)"]
+            Monitoring["Monitoring (Prometheus/Grafana)"]
+            Alerting["Alerting System"]
+            CICD["CI/CD Pipeline"]
+        end
+    end
+
+    %% Connections
+    WebClients --> CDN
+    MobileClients --> CDN
+    ThirdPartyApps --> APIGateway
+    
+    CDN --> WAF
+    WAF --> DDoSProtection
+    DDoSProtection --> LoadBalancer
+    
+    LoadBalancer --> APIGateway
+    APIGateway --> RateLimiter
+    RateLimiter --> AuthZ
+    
+    AuthZ --> ServiceDiscoveryAM
+    AuthZ --> ServiceDiscoveryEU
+    AuthZ --> ServiceDiscoveryAP
+    
+    ServiceDiscoveryAM --> CircuitBreakerAM
+    CircuitBreakerAM --> APIServicesAM
+    APIServicesAM <--> PrimaryDBsAM
+    APIServicesAM <--> CacheAM
+    APIServicesAM <--> QueueAM
+    
+    ServiceDiscoveryEU --> CircuitBreakerEU
+    CircuitBreakerEU --> APIServicesEU
+    APIServicesEU <--> PrimaryDBsEU
+    APIServicesEU <--> CacheEU
+    APIServicesEU <--> QueueEU
+    
+    ServiceDiscoveryAP --> CircuitBreakerAP
+    CircuitBreakerAP --> APIServicesAP
+    APIServicesAP <--> PrimaryDBsAP
+    APIServicesAP <--> CacheAP
+    APIServicesAP <--> QueueAP
+    
+    APIServicesAM <--> DocumentStore
+    APIServicesEU <--> DocumentStore
+    APIServicesAP <--> DocumentStore
+    
+    APIServicesAM <--> MLInference
+    APIServicesEU <--> MLInference
+    APIServicesAP <--> MLInference
+    
+    MLTraining --> ModelRegistry
+    ModelRegistry --> MLInference
+    
+    APIServicesAM --> Logging
+    APIServicesEU --> Logging
+    APIServicesAP --> Logging
+    
+    Logging --> Monitoring
+    Monitoring --> Alerting
+    
+    CICD --> APIServicesAM
+    CICD --> APIServicesEU
+    CICD --> APIServicesAP
+    CICD --> MLInference
+    
+    %% Global Data Replication
+    PrimaryDBsAM <-.-> PrimaryDBsEU
+    PrimaryDBsEU <-.-> PrimaryDBsAP
+    PrimaryDBsAP <-.-> PrimaryDBsAM
+    
+    PrimaryDBsAM --> DatabaseBackups
+    PrimaryDBsEU --> DatabaseBackups
+    PrimaryDBsAP --> DatabaseBackups
+    
+    %% Style
+    classDef client fill:#f5f5f5,stroke:#616161,stroke-width:1px
+    classDef security fill:#ffcdd2,stroke:#c62828,stroke-width:2px
+    classDef gateway fill:#bbdefb,stroke:#1976d2,stroke-width:2px
+    classDef service fill:#c8e6c9,stroke:#388e3c,stroke-width:2px
+    classDef data fill:#fff9c4,stroke:#fbc02d,stroke-width:2px
+    classDef global fill:#e1bee7,stroke:#8e24aa,stroke-width:2px
+    classDef devops fill:#d7ccc8,stroke:#5d4037,stroke-width:2px
+    
+    class WebClients,MobileClients,ThirdPartyApps client
+    class CDN,WAF,DDoSProtection security
+    class LoadBalancer,APIGateway,RateLimiter,AuthZ gateway
+    class ServiceDiscoveryAM,CircuitBreakerAM,APIServicesAM,ServiceDiscoveryEU,CircuitBreakerEU,APIServicesEU,ServiceDiscoveryAP,CircuitBreakerAP,APIServicesAP service
+    class PrimaryDBsAM,CacheAM,QueueAM,PrimaryDBsEU,CacheEU,QueueEU,PrimaryDBsAP,CacheAP,QueueAP,DocumentStore,DatabaseBackups,ArchiveStorage data
+    class MLTraining,ModelRegistry,MLInference global
+    class Logging,Monitoring,Alerting,CICD devops
+```
+
+This deployment architecture illustrates how MOSAIC achieves global scalability, regional data compliance, and high availability:
+
+1. **Multi-regional Deployment**: Services are deployed across three major geographic regions (Americas, Europe, Asia-Pacific) to ensure low latency and data residency compliance
+2. **Edge Security**: Multi-layered security starting at the edge with CDN, WAF, and DDoS protection
+3. **Regional Data Sovereignty**: Each region maintains its own primary database clusters to comply with data residency requirements
+4. **Service Mesh Architecture**: Each regional deployment uses a service mesh for service discovery, circuit breaking, and resilience
+5. **Global Services**: ML infrastructure, storage, and operations tools are globally available while respecting data boundaries
+
+### Database Architecture
+
+The data tier employs a polyglot persistence strategy with specialized databases for different data types and access patterns:
+
+```mermaid
+erDiagram
+    STUDENT ||--o{ DOCUMENT : uploads
+    STUDENT ||--o{ APPLICATION : submits
+    STUDENT {
+        uuid id
+        string full_name
+        string email
+        date dob
+        string nationality
+        jsonb academic_background
+        jsonb technical_skills
+        jsonb language_proficiencies
+        jsonb cultural_experiences
+        jsonb career_aspirations
+        point current_location
+        jsonb preferences
+        jsonb assessment_results
+    }
+    
+    DOCUMENT {
+        uuid id
+        uuid owner_id
+        string doc_type
+        string filename
+        string content_type
+        string status
+        timestamp upload_date
+        jsonb verification_results
+        string storage_path
+    }
+    
+    COMPANY ||--o{ OPPORTUNITY : posts
+    COMPANY {
+        uuid id
+        string name
+        string industry
+        point hq_location
+        jsonb locations
+        jsonb culture_profile
+        jsonb compliance_capabilities
+        jsonb subscription_details
+    }
+    
+    OPPORTUNITY ||--o{ APPLICATION : receives
+    OPPORTUNITY {
+        uuid id
+        uuid company_id
+        string title
+        text description
+        string location
+        date start_date
+        date end_date
+        int duration_weeks
+        jsonb required_skills
+        jsonb cultural_environment
+        jsonb compensation
+        jsonb mentorship_approach
+        jsonb visa_sponsorship
+    }
+    
+    APPLICATION {
+        uuid id
+        uuid student_id
+        uuid opportunity_id
+        string status
+        timestamp submission_date
+        jsonb documents
+        jsonb evaluation_results
+        jsonb compliance_checklist
+        text student_notes
+        text company_notes
+    }
+    
+    MATCH {
+        uuid id
+        uuid student_id
+        uuid opportunity_id
+        float professional_synergy_score
+        float cultural_compatibility_score
+        float regulatory_feasibility_score
+        float overall_match_score
+        jsonb detailed_analysis
+        timestamp created_at
+    }
+    
+    COMPLIANCE_REQUIREMENT {
+        uuid id
+        string country
+        string requirement_type
+        text description
+        jsonb document_requirements
+        jsonb verification_steps
+        date effective_from
+        date effective_to
+    }
+    
+    INTERNSHIP ||--|| APPLICATION : results_from
+    INTERNSHIP {
+        uuid id
+        uuid student_id
+        uuid company_id
+        uuid opportunity_id
+        date start_date
+        date end_date
+        string status
+        jsonb check_in_history
+        jsonb skill_development
+        jsonb cultural_integration
+        jsonb completion_certificate
+    }
+    
+    STUDENT ||--o{ MATCH : receives
+    OPPORTUNITY ||--o{ MATCH : generates
+    OPPORTUNITY }|--|| COMPLIANCE_REQUIREMENT : must_satisfy
+    STUDENT ||--o{ INTERNSHIP : participates_in
+    COMPANY ||--o{ INTERNSHIP : hosts
+```
+
+This entity-relationship diagram shows the core data model for MOSAIC, highlighting:
+
+1. **Rich Profile Data**: Both student and company profiles contain extensive structured data including cultural and compliance-related attributes
+2. **Document Management**: Comprehensive tracking of uploaded documents with verification status and results
+3. **Multidimensional Matching**: The match entity captures scores across all three dimensions of the Cultural Integration Matrix
+4. **End-to-End Journey**: Data structures support the complete journey from application through internship completion
+5. **Compliance Integration**: Regulatory requirements are modeled as first-class entities linked to opportunities
+
+### API Architecture
+
+The MOSAIC API follows a domain-driven design with RESTful endpoints and GraphQL interfaces for flexible data access:
+
+```mermaid
+flowchart LR
+    %% Client Applications
+    subgraph Clients["Client Applications"]
+        StudentApp["Student Mobile/Web App"]
+        CompanyPortal["Company Portal"]
+        AdminDashboard["Admin Dashboard"]
+        Partners["Partner Integrations"]
+    end
+    
+    %% API Gateway
+    subgraph Gateway["API Gateway Layer"]
+        IdentityProvider["Identity Provider<br>(OAuth2/OIDC)"]
+        APIGateway["Kong API Gateway"]
+        GraphQLGateway["GraphQL Gateway"]
+        WebhookManager["Webhook Manager"]
+    end
+    
+    %% API Domains
+    subgraph DomainAPIs["Domain APIs"]
+        ProfileAPI["Profile API"]
+        MatchingAPI["Matching API"]
+        DocumentAPI["Document API"]
+        ApplicationAPI["Application API"]
+        ComplianceAPI["Compliance API"]
+        ExperienceAPI["Experience API"]
+        AnalyticsAPI["Analytics API"]
+    end
+    
+    %% Core Services
+    subgraph CoreSvcs["Core Service Layer"]
+        ProfileService["Profile Service"]
+        MatchingEngine["Matching Engine"]
+        DocumentService["Document Service"]
+        ApplicationService["Application Service"]
+        ComplianceService["Compliance Service"]
+        ExperienceService["Experience Service"]
+        AnalyticsService["Analytics Service"]
+    end
+    
+    %% Event Bus
+    EventBus["Event Bus (Kafka)"]
+    
+    %% External Integrations
+    subgraph External["External Services"]
+        EducationVerifiers["Education Verification APIs"]
+        VisaSystems["Visa Processing Systems"]
+        IdentityVerifiers["Identity Verification Services"]
+        PaymentProviders["Payment Providers"]
+        EmailService["Email Service"]
+    end
+    
+    %% Connections
+    Clients <--> Gateway
+    Gateway <--> DomainAPIs
+    DomainAPIs <--> CoreSvcs
+    CoreSvcs <--> EventBus
+    CoreSvcs <--> External
+    
+    %% Domain API Details
+    ProfileAPI -- "/students, /companies" --> ProfileService
+    MatchingAPI -- "/matches, /recommendations" --> MatchingEngine
+    DocumentAPI -- "/documents, /verifications" --> DocumentService
+    ApplicationAPI -- "/applications, /interviews" --> ApplicationService
+    ComplianceAPI -- "/requirements, /checklists" --> ComplianceService
+    ExperienceAPI -- "/internships, /feedback" --> ExperienceService
+    AnalyticsAPI -- "/metrics, /reports" --> AnalyticsService
+    
+    %% Event Flow Examples
+    ProfileService -- "ProfileUpdated" --> EventBus
+    EventBus -- "ProfileUpdated" --> MatchingEngine
+    ApplicationService -- "ApplicationSubmitted" --> EventBus
+    EventBus -- "ApplicationSubmitted" --> ComplianceService
+    
+    %% Style
+    classDef client fill:#f5f5f5,stroke:#616161,stroke-width:1px
+    classDef gateway fill:#bbdefb,stroke:#1976d2,stroke-width:2px
+    classDef apis fill:#c8e6c9,stroke:#388e3c,stroke-width:2px
+    classDef services fill:#e1bee7,stroke:#8e24aa,stroke-width:2px
+    classDef external fill:#d7ccc8,stroke:#5d4037,stroke-width:2px
+    classDef events fill:#ffecb3,stroke:#ffa000,stroke-width:2px
+    
+    class Clients,StudentApp,CompanyPortal,AdminDashboard,Partners client
+    class Gateway,IdentityProvider,APIGateway,GraphQLGateway,WebhookManager gateway
+    class DomainAPIs,ProfileAPI,MatchingAPI,DocumentAPI,ApplicationAPI,ComplianceAPI,ExperienceAPI,AnalyticsAPI apis
+    class CoreSvcs,ProfileService,MatchingEngine,DocumentService,ApplicationService,ComplianceService,ExperienceService,AnalyticsService services
+    class External,EducationVerifiers,VisaSystems,IdentityVerifiers,PaymentProviders,EmailService external
+    class EventBus events
+```
+
+This API architecture illustrates:
+
+1. **Domain-Oriented Design**: APIs are organized around business domains rather than technical concerns
+2. **Multi-Protocol Support**: REST APIs for CRUD operations, GraphQL for flexible queries, webhooks for integrations
+3. **Event-Driven Communication**: Services communicate via events for loose coupling and scalability
+4. **API Gateway Pattern**: Unified entry point handling authentication, rate limiting, and routing
+5. **Secure External Integrations**: Well-defined interfaces to third-party services for verification and compliance
+
 ### Key Architectural Components
 
 1. **Cultural Integration Engine**:
