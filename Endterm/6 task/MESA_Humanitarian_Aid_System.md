@@ -1,7 +1,7 @@
 # MESA: Mycelial-Encoded Sovereign Aid Network
 ## A Resilient Biomimetic Humanitarian Distribution System
 
-## 1. Executive Summary
+## 1. Summary
 
 MESA represents a paradigm shift in humanitarian aid delivery through biomimetic design principles that mimic mycelial networks found in nature. This novel approach addresses the critical challenges that plague current humanitarian distribution systems:
 
@@ -555,7 +555,457 @@ Rather than scaling through centralized infrastructure, MESA scales organically 
 ### 9.5 Temporal Consensus Protocol
 MESA's novel consensus mechanism doesn't require immediate agreement, instead allowing parts of the system to operate with eventual consistency, mirroring how biological systems maintain coherence despite delayed signal propagation.
 
-## 10. Conclusion: Redefining Humanitarian Systems
+## 10. Technical System Design: Detailed Architecture
+
+### 10.1 Component Architecture: Modular Design
+
+```mermaid
+flowchart TD
+    subgraph IdentityComponents["Identity Management Subsystem"]
+        direction TB
+        BioCapture["Biometric Capture<br>Module"] --> BioProcessor["Biometric<br>Processing Engine"]
+        BioProcessor --> TemplateStore["Secure Template<br>Storage"]
+        TemplateStore --> MatchingEngine["Matching Engine"]
+        MatchingEngine --> VerificationService["Verification<br>Service"]
+        
+        TrustManager["Trust Circle<br>Manager"] --> TrustGraph["Trust Graph<br>Analyzer"]
+        TrustGraph --> TrustScore["Trust Score<br>Calculator"]
+        TrustScore --> VerificationService
+        
+        VerificationService --> ZKGenerator["ZK-Proof<br>Generator"]
+        
+        TokenManager["Sovereign ID<br>Token Manager"] --> TokenLifecycle["Token Lifecycle<br>Handler"]
+        TokenLifecycle --> TokenProvisioning["Token<br>Provisioning"]
+    end
+    
+    subgraph MeshComponents["Mesh Networking Subsystem"]
+        direction TB
+        Discovery["Node Discovery<br>Service"] --> Routing["Mesh Routing<br>Logic"]
+        Routing --> DataTransport["Data Transport<br>Layer"]
+        DataTransport --> SyncEngine["Synchronization<br>Engine"]
+        SyncEngine --> ReplicationManager["Replication<br>Manager"]
+        
+        MeshMonitor["Network<br>Monitor"] --> TopologyManager["Topology<br>Manager"]
+        TopologyManager --> RouteOptimizer["Route<br>Optimizer"]
+        RouteOptimizer --> Routing
+        
+        PowerManager["Power<br>Manager"] --> RadioControl["Radio Control<br>Module"]
+        RadioControl --> DataTransport
+    end
+    
+    subgraph DistributionComponents["Aid Distribution Subsystem"]
+        direction TB
+        ProgramManager["Aid Program<br>Manager"] --> EligibilityEngine["Eligibility<br>Engine"]
+        EligibilityEngine --> BeneficiaryManager["Beneficiary<br>Manager"]
+        
+        InventoryTracker["Inventory<br>Tracker"] --> DistributionPlanner["Distribution<br>Planner"]
+        DistributionPlanner --> EventManager["Event Manager"]
+        
+        EventManager --> ReceiptGenerator["Digital Receipt<br>Generator"]
+        ReceiptGenerator --> TransactionLogger["Transaction<br>Logger"]
+        
+        AnalyticsEngine["Analytics<br>Engine"] --> ReportGenerator["Report<br>Generator"]
+    end
+    
+    subgraph SecurityComponents["Security & Privacy Subsystem"]
+        direction TB
+        CryptoProvider["Cryptographic<br>Provider"] --> KeyManager["Key<br>Manager"]
+        KeyManager --> SignatureService["Signature<br>Service"]
+        
+        ConsentManager["Consent<br>Manager"] --> PolicyEnforcer["Policy<br>Enforcer"]
+        
+        AuditLogger["Audit<br>Logger"] --> ComplianceChecker["Compliance<br>Checker"]
+        
+        AnonymizationEngine["Anonymization<br>Engine"] --> DataMinimizer["Data<br>Minimizer"]
+    end
+    
+    %% Cross-component interactions
+    VerificationService --> EligibilityEngine
+    TokenManager <--> SignatureService
+    DistributionPlanner --> TopologyManager
+    TransactionLogger --> SyncEngine
+    PolicyEnforcer --> DataTransport
+    ZKGenerator --> ConsentManager
+    
+    %% Styling
+    classDef identity fill:#f9d5e5,stroke:#5d001e,stroke-width:2px
+    classDef mesh fill:#d3f8e2,stroke:#0a6522,stroke-width:2px
+    classDef distribution fill:#e3f2fd,stroke:#0d47a1,stroke-width:2px
+    classDef security fill:#fff8e1,stroke:#f57f17,stroke-width:2px
+    
+    class IdentityComponents,BioCapture,BioProcessor,TemplateStore,MatchingEngine,VerificationService,TrustManager,TrustGraph,TrustScore,TokenManager,TokenLifecycle,TokenProvisioning,ZKGenerator identity
+    class MeshComponents,Discovery,Routing,DataTransport,SyncEngine,ReplicationManager,MeshMonitor,TopologyManager,RouteOptimizer,PowerManager,RadioControl mesh
+    class DistributionComponents,ProgramManager,EligibilityEngine,BeneficiaryManager,InventoryTracker,DistributionPlanner,EventManager,ReceiptGenerator,TransactionLogger,AnalyticsEngine,ReportGenerator distribution
+    class SecurityComponents,CryptoProvider,KeyManager,SignatureService,ConsentManager,PolicyEnforcer,AuditLogger,ComplianceChecker,AnonymizationEngine,DataMinimizer security
+```
+
+The component architecture follows a modular design approach where:
+
+1. **Identity Management Subsystem**:
+   - Biometric components handle capture, processing, and matching without storing raw biometrics
+   - Trust components manage the social verification web and calculate trust scores
+   - Token components manage the lifecycle of physical sovereign identity tokens
+
+2. **Mesh Networking Subsystem**:
+   - Network discovery and dynamic topology management for optimal resource utilization
+   - Power-aware networking with adaptive radio controls for extended field operation
+   - Synchronization engine implementing the CRDT-based replication protocol
+
+3. **Aid Distribution Subsystem**:
+   - Program and eligibility management for determining aid entitlements
+   - Inventory and distribution planning with offline operation capabilities
+   - Digital receipt generation with multi-signature verification
+
+4. **Security & Privacy Subsystem**:
+   - Cryptographic foundation with key management and signing services
+   - Consent management enforcing recipient-defined data sharing policies
+   - Anonymization engine for privacy-preserving analytics
+
+### 10.2 Deployment Topology: Fieldable Infrastructure
+
+```mermaid
+graph TD
+    subgraph CrisisZone["Crisis Zone Region"]
+        subgraph DistributionCluster["Distribution Center Cluster"]
+            direction LR
+            DC1["Distribution<br>Center 1"]
+            DC2["Distribution<br>Center 2"]
+            DC3["Distribution<br>Center 3"]
+        end
+        
+        subgraph FieldOperations["Field Operations Area"]
+            MU1["Mobile<br>Unit 1"]
+            MU2["Mobile<br>Unit 2"]
+            MU3["Mobile<br>Unit 3"]
+            MU4["Mobile<br>Unit 4"]
+            MU5["Mobile<br>Unit 5"]
+        end
+        
+        subgraph TrustInfrastructure["Community Trust Infrastructure"]
+            CT1["Community<br>Trust Node 1"]
+            CT2["Community<br>Trust Node 2"]
+            CT3["Community<br>Trust Node 3"]
+        end
+        
+        SS1["Sync<br>Station 1"]
+        SS2["Sync<br>Station 2"]
+    end
+    
+    subgraph RegionalHub["Regional Coordination Hub"]
+        RDB["Regional<br>Database"]
+        RSync["Regional<br>Sync Server"]
+        RAnl["Regional<br>Analytics"]
+        RAuth["Regional<br>Auth Server"]
+    end
+    
+    subgraph GlobalInfrastructure["Global Infrastructure (Optional)"]
+        FedGW["Federation<br>Gateway"]
+        CrossOrg["Cross-Org<br>Registry"]
+        AuditDB["Audit<br>Database"]
+        BackupSys["Backup<br>Systems"]
+    end
+    
+    %% Local Mesh Network Connections
+    MU1 <--> MU2
+    MU2 <--> MU3
+    MU3 <--> MU4
+    MU4 <--> MU5
+    MU5 <--> MU1
+    MU1 <--> MU3
+    MU2 <--> MU4
+    
+    %% Distribution Center Network
+    DC1 <--> DC2
+    DC2 <--> DC3
+    DC3 <--> DC1
+    
+    %% Trust Node Connections
+    CT1 <--> CT2
+    CT2 <--> CT3
+    CT3 <--> CT1
+    
+    %% Field to Distribution Connections
+    MU1 <-.-> DC1
+    MU3 <-.-> DC2
+    MU5 <-.-> DC3
+    
+    %% Field to Community Trust
+    MU2 <-.-> CT1
+    MU4 <-.-> CT3
+    
+    %% Sync Station Connections
+    DC1 <--> SS1
+    DC2 <--> SS1
+    DC3 <--> SS2
+    CT1 <--> SS1
+    CT3 <--> SS2
+    
+    %% Regional Connections (Intermittent)
+    SS1 -.-> RSync
+    SS2 -.-> RSync
+    RSync --- RDB
+    RSync --- RAnl
+    RSync --- RAuth
+    
+    %% Global Connections (When Available)
+    RSync -. "Optional<br>Connection" .-> FedGW
+    FedGW --- CrossOrg
+    FedGW --- AuditDB
+    FedGW --- BackupSys
+    
+    %% Define connection types
+    linkStyle 0,1,2,3,4,5,6,7,8,9,10,11,12 stroke:#0a6522,stroke-width:2px; %% Mesh connections
+    linkStyle 13,14,15,16,17,18,19,20,21 stroke:#5d001e,stroke-width:2px,stroke-dasharray: 5 5; %% Intermittent connections
+    linkStyle 22,23 stroke:#0d47a1,stroke-width:2px; %% Sync station connections
+    linkStyle 24,25,26 stroke:#880e4f,stroke-width:2px; %% Regional hub connections
+    linkStyle 27 stroke:#f57f17,stroke-width:2px,stroke-dasharray: 10 10; %% Optional global connections
+    linkStyle 28,29,30 stroke:#f57f17,stroke-width:2px; %% Federation connections
+    
+    %% Styling
+    classDef field fill:#d3f8e2,stroke:#0a6522,stroke-width:2px
+    classDef distribution fill:#f9d5e5,stroke:#5d001e,stroke-width:2px
+    classDef trust fill:#fff8e1,stroke:#f57f17,stroke-width:2px
+    classDef sync fill:#e3f2fd,stroke:#0d47a1,stroke-width:2px
+    classDef regional fill:#bbdefb,stroke:#0d47a1,stroke-width:2px
+    classDef global fill:#f8bbd0,stroke:#880e4f,stroke-width:2px
+    
+    class MU1,MU2,MU3,MU4,MU5,FieldOperations field
+    class DC1,DC2,DC3,DistributionCluster distribution
+    class CT1,CT2,CT3,TrustInfrastructure trust
+    class SS1,SS2 sync
+    class RDB,RSync,RAnl,RAuth,RegionalHub regional
+    class FedGW,CrossOrg,AuditDB,BackupSys,GlobalInfrastructure global
+```
+
+The deployment topology illustrates the physical infrastructure arrangement:
+
+1. **Crisis Zone Infrastructure**:
+   - Mobile Units form a dynamic mesh network, connecting opportunistically
+   - Distribution Centers act as semi-permanent hubs with larger compute/storage
+   - Community Trust Nodes provide localized verification anchors
+   - Sync Stations serve as data aggregation points with periodic connectivity
+
+2. **Regional Coordination Hub**:
+   - Regional infrastructure deployed in nearby stable locations
+   - Provides synchronization, analytics, and authentication services
+   - Operates with intermittent connections to the crisis zone
+
+3. **Global Infrastructure**:
+   - Optional layer that enables cross-organizational coordination
+   - Only activated when reliable connectivity is available
+   - Provides federation services and secure backup facilities
+
+The deployment is designed to be resilient with no single points of failure and operates effectively with intermittent or no connectivity to higher infrastructure tiers.
+
+### 10.3 Security Architecture: Multi-Layered Protection
+
+```mermaid
+flowchart TD
+    subgraph UserFlow["User Authentication & Authorization Flow"]
+        direction LR
+        ID[("Recipient<br>Identity")] --> BioAuth["Biometric<br>Authentication"]
+        BioAuth --> SocialVerify["Social<br>Verification"]
+        SocialVerify --> TokenGen["Generate<br>Auth Token"]
+        TokenGen --> AuthDecision{"Authorized?"}
+        AuthDecision -->|Yes| GrantAccess["Grant<br>Access"]
+        AuthDecision -->|No| DenyAccess["Deny<br>Access"]
+    end
+    
+    subgraph DataFlow["Data Protection Flow"]
+        direction LR
+        RawData[("Raw<br>Data")] --> Validate["Data<br>Validation"]
+        Validate --> Encrypt["Encrypt<br>Data"]
+        Encrypt --> Sign["Cryptographic<br>Signing"]
+        Sign --> Store["Secure<br>Storage"]
+        
+        RetrieveReq["Retrieval<br>Request"] --> ConsentCheck{"Consent<br>Check"}
+        ConsentCheck -->|Approved| Retrieve["Retrieve<br>Data"]
+        ConsentCheck -->|Denied| RejectAccess["Reject<br>Access"]
+        Retrieve --> Verify["Verify<br>Signature"]
+        Verify --> Decrypt["Decrypt<br>Data"]
+        Decrypt --> AccessControl["Apply Access<br>Controls"]
+        AccessControl --> ProvideData["Provide<br>Data"]
+    end
+    
+    subgraph SecLayers["Security Layers"]
+        direction TB
+        PhysicalSec["Physical<br>Security"] --> DeviceSec["Device<br>Security"]
+        DeviceSec --> CommSec["Communication<br>Security"]
+        CommSec --> AppSec["Application<br>Security"]
+        AppSec --> DataSec["Data<br>Security"]
+        
+        PhysicalSec -.-> TamperEv["Tamper-Evident<br>Hardware"]
+        DeviceSec -.-> SecBoot["Secure Boot<br>& TEE"]
+        CommSec -.-> E2EE["End-to-End<br>Encryption"]
+        AppSec -.-> RBAC["Role-Based<br>Access Control"]
+        DataSec -.-> FDE["Full Disk<br>Encryption"]
+    end
+    
+    subgraph ZKSystem["Zero-Knowledge Verification System"]
+        direction TB
+        PrivateAttr["Private<br>Attributes"] --> Commitment["Create<br>Commitment"]
+        Commitment --> ProofGen["Generate<br>ZK Proof"]
+        ProofGen --> ProofPub["Public<br>Proof"]
+        
+        VerifyReq["Verification<br>Request"] --> ProofVerify["Verify<br>Proof"]
+        ProofVerify --> VerifyResult{"Proof<br>Valid?"}
+        VerifyResult -->|Yes| AttrConfirm["Attribute<br>Confirmed"]
+        VerifyResult -->|No| VerifyFail["Verification<br>Failed"]
+    end
+    
+    %% Cross-diagram relationships
+    AuthDecision -->|"Auth Token"| RetrieveReq
+    GrantAccess -->|"Access<br>Rights"| AccessControl
+    Sign -->|"Security<br>Methods"| SecLayers
+    ProofGen -->|"Used in"| ConsentCheck
+    
+    %% Styling
+    classDef auth fill:#f9d5e5,stroke:#5d001e,stroke-width:2px
+    classDef data fill:#d3f8e2,stroke:#0a6522,stroke-width:2px
+    classDef security fill:#e3f2fd,stroke:#0d47a1,stroke-width:2px
+    classDef zk fill:#fff8e1,stroke:#f57f17,stroke-width:2px
+    
+    class UserFlow,ID,BioAuth,SocialVerify,TokenGen,AuthDecision,GrantAccess,DenyAccess auth
+    class DataFlow,RawData,Validate,Encrypt,Sign,Store,RetrieveReq,ConsentCheck,Retrieve,RejectAccess,Verify,Decrypt,AccessControl,ProvideData data
+    class SecLayers,PhysicalSec,DeviceSec,CommSec,AppSec,DataSec,TamperEv,SecBoot,E2EE,RBAC,FDE security
+    class ZKSystem,PrivateAttr,Commitment,ProofGen,ProofPub,VerifyReq,ProofVerify,VerifyResult,AttrConfirm,VerifyFail zk
+```
+
+The security architecture implements defense-in-depth with multiple overlapping mechanisms:
+
+1. **User Authentication & Authorization Flow**:
+   - Combines biometric verification with social attestation
+   - Generates time-limited authorization tokens
+   - Makes contextual authorization decisions
+
+2. **Data Protection Flow**:
+   - Validates all data before processing
+   - Implements end-to-end encryption with forward secrecy
+   - Applies consent policies before data access
+   - Uses cryptographic signatures to ensure data integrity
+
+3. **Security Layers**:
+   - Physical security with tamper-evident hardware
+   - Device security using secure boot and trusted execution
+   - Communication security with end-to-end encryption
+   - Application security with role-based access control
+   - Data security with full disk encryption
+
+4. **Zero-Knowledge Verification System**:
+   - Enables proving statements without revealing underlying data
+   - Allows eligibility verification without exposing sensitive attributes
+   - Provides cryptographic guarantees of data minimization
+
+### 10.4 Fault Tolerance & Recovery Mechanisms
+
+```mermaid
+stateDiagram-v2
+    [*] --> Normal
+    
+    state Normal {
+        [*] --> Operational
+        Operational --> DataCollection
+        DataCollection --> Synchronization
+        Synchronization --> Operational
+    }
+    
+    state DeviceFailure {
+        [*] --> DetectFailure
+        DetectFailure --> ReportStatus
+        ReportStatus --> InitiateRepair
+        InitiateRepair --> ValidationTests
+        ValidationTests --> [*]
+    }
+    
+    state NetworkPartition {
+        [*] --> DetectPartition
+        DetectPartition --> LocalOperation
+        LocalOperation --> AttemptReconnection
+        AttemptReconnection --> SyncOnReconnect
+        SyncOnReconnect --> ConflictResolution
+        ConflictResolution --> [*]
+    }
+    
+    state DataCorruption {
+        [*] --> DetectCorruption
+        DetectCorruption --> IsolateCorruptedData
+        IsolateCorruptedData --> RetrieveBackup
+        RetrieveBackup --> ValidateRecoveredData
+        ValidateRecoveredData --> ReintegrateData
+        ReintegrateData --> [*]
+    }
+    
+    state SecurityBreach {
+        [*] --> DetectBreach
+        DetectBreach --> IsolateCompromisedSystem
+        IsolateCompromisedSystem --> RevokeCredentials
+        RevokeCredentials --> ForensicAnalysis
+        ForensicAnalysis --> SecurityHardening
+        SecurityHardening --> ReauthorizeSystem
+        ReauthorizeSystem --> [*]
+    }
+    
+    Normal --> DeviceFailure: Device Malfunction
+    DeviceFailure --> Normal: Repair Complete
+    
+    Normal --> NetworkPartition: Connection Lost
+    NetworkPartition --> Normal: Network Restored
+    
+    Normal --> DataCorruption: Data Issue Detected
+    DataCorruption --> Normal: Data Restored
+    
+    Normal --> SecurityBreach: Breach Detected
+    SecurityBreach --> Normal: Security Restored
+    
+    state RecoveryCoordination {
+        SystemMonitoring --> AnomalyDetection
+        AnomalyDetection --> IncidentClassification
+        IncidentClassification --> RecoveryWorkflow
+        RecoveryWorkflow --> RestorationVerification
+        RestorationVerification --> SystemMonitoring
+    }
+    
+    DeviceFailure --> RecoveryCoordination
+    NetworkPartition --> RecoveryCoordination
+    DataCorruption --> RecoveryCoordination
+    SecurityBreach --> RecoveryCoordination
+```
+
+The fault tolerance architecture ensures system resilience across various failure scenarios:
+
+1. **Device Failure Recovery**:
+   - Automatic detection of malfunctioning components
+   - Graceful degradation with continued operation
+   - Hot-swappable field replaceable units
+   - Self-diagnosis and repair protocols
+
+2. **Network Partition Handling**:
+   - Seamless transition to offline operation
+   - Local data validation and operation continuity
+   - Periodic reconnection attempts with exponential backoff
+   - Conflict-free data merging on reconnection through CRDT
+
+3. **Data Corruption Management**:
+   - Checksums and cryptographic verification of all data
+   - Corruption isolation to prevent spreading
+   - Multi-tiered backup strategy with versioning
+   - Data recovery with integrity validation
+
+4. **Security Breach Responses**:
+   - Anomaly detection for unusual access patterns
+   - Automatic isolation of potentially compromised components
+   - Key rotation and credential revocation capabilities
+   - Secure recovery paths with forensic analysis
+
+5. **Recovery Coordination**:
+   - Centralized monitoring with distributed execution
+   - Event classification and appropriate response selection
+   - Systematized recovery workflows for each failure type
+   - Verification of system integrity post-recovery
+
+All recovery mechanisms operate without requiring internet connectivity and maintain local functionality during recovery processes.
+
+## 11. Conclusion: Redefining Humanitarian Systems
 
 MESA represents a fundamental reimagining of humanitarian aid distribution systems, recognizing that the most resilient systems in nature are not hierarchical but distributed and network-organized. By prioritizing trust relationships, autonomous operation, and recipient data sovereignty, MESA creates a system that:
 
