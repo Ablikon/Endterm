@@ -6,6 +6,80 @@ During my field research across three major Asian urban centers, I documented a 
 
 This phenomenon creates what I call the "Transportation Resource Paradox" - we simultaneously have too little capacity when needed most and excessive capacity when demand diminishes. Traditional solutions involving fixed routes, static schedules, and uniform vehicle sizes have proven fundamentally inadequate to address this dynamic challenge.
 
+## Functional Requirements
+
+The BioAdaptive Urban Transit System (BAUTS) must fulfill the following functional requirements to successfully address the Transportation Resource Paradox:
+
+### Resource Management and Allocation
+1. **Dynamic Fleet Allocation**: Automatically redistribute vehicles between routes based on real-time and predicted demand patterns
+2. **Multi-tier Vehicle Integration**: Seamlessly coordinate high-capacity traditional vehicles, medium-capacity autonomous buses, and small autonomous shuttles as a unified system
+3. **Adjustable Route Generation**: Create and modify routes in near real-time based on emerging travel patterns and demand signals
+4. **Multi-modal Coordination**: Integrate with other transportation modes (rail, micro-mobility, pedestrian) for comprehensive journey planning
+
+### Real-time Monitoring and Response
+1. **Passenger Flow Tracking**: Monitor passenger volumes across the network with granular spatial and temporal resolution
+2. **Demand Prediction**: Forecast passenger demand within 10-minute intervals for the next 24 hours, with accuracy exceeding 85%
+3. **Traffic Condition Integration**: Incorporate real-time traffic data to optimize routing and scheduling decisions
+4. **Event Response**: Automatically adjust service patterns for planned events (concerts, sports) and unplanned incidents (accidents, weather)
+
+### Autonomous Vehicle Operations
+1. **Self-driving Capability**: Operate autonomous vehicles safely in mixed traffic environments with SAE Level 4 autonomy
+2. **Vehicle-to-Vehicle Communication**: Enable real-time communication between all fleet vehicles for coordination and safety
+3. **Vehicle-to-Infrastructure Communication**: Connect vehicles with traffic signals, sensors, and transit hubs
+4. **Dynamic Redistribution**: Automatically reposition vehicles based on predicted demand and energy optimization
+
+### Passenger Experience
+1. **Journey Planning**: Provide door-to-door journey planning with real-time updates and alternatives
+2. **Personalized Services**: Adapt to individual passenger preferences, accessibility needs, and travel patterns
+3. **Seamless Transfers**: Coordinate vehicle arrivals to minimize transfer waiting times to under 3 minutes on average
+4. **Service Guarantees**: Maintain consistent service levels with defined maximum wait times even during off-peak hours
+
+### System Management and Evolution
+1. **Performance Monitoring**: Track and report key performance indicators in real-time
+2. **Self-optimization**: Continuously improve routing, scheduling, and resource allocation based on observed patterns
+3. **Service Experimentation**: Systematically test service variations to discover optimal configurations
+4. **Continuous Learning**: Incorporate feedback from operations to enhance prediction models and decision algorithms
+
+## Non-Functional Requirements
+
+To ensure the system delivers a reliable, scalable, and sustainable service, it must meet these non-functional requirements:
+
+### Performance
+1. **Response Time**: Process and respond to changing conditions within 30 seconds
+2. **Throughput**: Handle data from 10,000+ sensors and 1,000+ vehicles simultaneously
+3. **Prediction Speed**: Generate new demand forecasts every 5 minutes for the entire service area
+4. **Decision Latency**: Complete resource allocation decisions within 10 seconds of receiving updated data
+
+### Reliability and Availability
+1. **System Uptime**: Maintain 99.99% availability for core functions (maximum 52.6 minutes downtime per year)
+2. **Degraded Operation**: Provide basic service even during partial system failures through redundant capabilities
+3. **Fault Tolerance**: Continue operation despite the failure of any individual component or communication link
+4. **Disaster Recovery**: Restore full system functionality within 10 minutes of major disruption
+
+### Safety and Security
+1. **Operational Safety**: Ensure no preventable accidents through multi-layered safety systems with 99.9999% reliability
+2. **Cybersecurity**: Protect against unauthorized access with defense-in-depth security architecture
+3. **Data Protection**: Encrypt all passenger data and communications using industry-standard protocols
+4. **Anomaly Detection**: Identify and respond to unusual patterns that may indicate safety or security threats within 5 seconds
+
+### Scalability
+1. **Geographic Expansion**: Scale to cover urban areas of up to 5,000 square kilometers without architecture changes
+2. **Capacity Growth**: Support up to 5,000 vehicles and 2 million daily passengers
+3. **Peak Management**: Handle 10x normal transaction volume during exceptional demand periods
+4. **Incremental Deployment**: Function effectively at any scale from pilot (10 vehicles) to full deployment
+
+### Sustainability
+1. **Energy Efficiency**: Reduce energy consumption by at least 30% compared to conventional transit systems
+2. **Resource Optimization**: Achieve minimum 80% average vehicle utilization across the fleet
+3. **Environmental Impact**: Minimize emissions through optimal routing and vehicle assignment
+4. **Infrastructure Utilization**: Maximize use of existing infrastructure with minimal new construction requirements
+
+### Adaptability
+1. **Weather Resilience**: Maintain service levels across diverse weather conditions
+2. **Demand Flexibility**: Adapt to 300% variations in demand between peak and off-peak periods
+3. **Urban Evolution**: Accommodate changing urban patterns over time without major system redesign
+4. **Technology Integration**: Incorporate new vehicle technologies and communication standards as they emerge
+
 ## The BioAdaptive Solution: Learning from Natural Systems
 
 My proposed solution draws inspiration from biological systems that efficiently distribute resources in response to changing demands - specifically the human circulatory system. Just as our bodies redirect blood flow to muscles during exercise while maintaining critical baseline circulation to vital organs, my BioAdaptive Urban Transit System (BAUTS) dynamically reconfigures itself to meet fluctuating passenger demands.
